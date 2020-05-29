@@ -53,6 +53,10 @@ func (repo *projectRepository) Delete(project *model.Project) error {
 	return repo.DB.DeleteStruct(project)
 }
 
+func (repo *projectRepository) UpdateField(task *model.Project, field string, value interface{}) error {
+	return repo.DB.UpdateField(task, field, value)
+}
+
 func (repo *projectRepository) getOneByField(fieldName string, val interface{}) (model.Project, error) {
 	var project model.Project
 	err := repo.DB.One(fieldName, val, &project)

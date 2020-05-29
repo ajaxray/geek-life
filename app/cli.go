@@ -1,0 +1,121 @@
+package main
+
+import (
+	"reflect"
+
+	"github.com/asdine/storm/v3"
+	"github.com/gdamore/tcell"
+	"github.com/rivo/tview"
+
+	"github.com/ajaxray/geek-life/model"
+	"github.com/ajaxray/geek-life/repository"
+	repo "github.com/ajaxray/geek-life/repository/storm"
+	"github.com/ajaxray/geek-life/util"
+)
+
+var (
+	app                               *tview.Application
+	newProject, newTask               *tview.InputField
+	projectList, taskList             *tview.List
+	projectPane, taskPane, detailPane *tview.Flex
+	layout, contents                  *tview.Flex
+	statusBar                         *tview.Pages
+	message                           *tview.TextView
+	shortcutsPage, messagePage        string = "shortcuts", "message"
+
+	db          *storm.DB
+	projectRepo repository.ProjectRepository
+	taskRepo    repository.TaskRepository
+
+	projects       []model.Project
+	currentProject model.Project
+)
+
+func main() {
+	app = tview.NewApplication()
+
+	db = util.ConnectStorm()
+	defer db.Close()
+
+	projectRepo = repo.NewProjectRepository(db)
+	taskRepo = repo.NewTaskRepository(db)
+
+	titleText := tview.NewTextView().SetText("[lime::b]Geek-life [::-]- life management for geeks!").SetDynamicColors(true)
+	cloudStatus := tview.NewTextView().SetText("[::d]Cloud Sync: off").SetTextAlign(tview.AlignRight).SetDynamicColors(true)
+
+	titleBar := tview.NewFlex().
+		AddItem(titleText, 0, 2, false).
+		AddItem(cloudStatus, 0, 1, false)
+
+	prepareProjectPane()
+	prepareTaskPane()
+	prepareStatusBar()
+	prepareDetailPane()
+
+	contents = tview.NewFlex().
+		AddItem(projectPane, 25, 1, true).
+		AddItem(taskPane, 0, 2, false)
+		//AddItem(detailPane, 0, 3, true)
+
+	layout = tview.NewFlex().SetDirection(tview.FlexRow).
+		AddItem(titleBar, 2, 1, false).
+		AddItem(contents, 0, 2, true).
+		AddItem(statusBar, 1, 1, false)
+
+	setKeyboardShortcuts(projectPane, taskPane)
+
+	if err := app.SetRoot(layout, true).EnableMouse(true).Run(); err != nil {
+		panic(err)
+	}
+}
+
+func setKeyboardShortcuts(projectPane *tview.Flex, taskPane *tview.Flex) *tview.Application {
+	return app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+		if ignoreKeyEvt() {
+			return event
+		}
+		switch event.Rune() {
+		case 'p':
+			app.SetFocus(projectPane)
+		case 't':
+			app.SetFocus(taskPane)
+		case 'n':
+			if projectPane.HasFocus() {
+				app.SetFocus(newProject)
+			} else if taskPane.HasFocus() {
+				app.SetFocus(newTask)
+			}
+		case 'e':
+			if detailPane.HasFocus() {
+				activateEditor()
+			} else {
+				// @TODO : Remove
+				showMessage(reflect.TypeOf(app.GetFocus()).String())
+			}
+		case 'f':
+			// @TODO : Remove
+			showMessage(reflect.TypeOf(app.GetFocus()).String())
+		}
+
+		return event
+	})
+}
+
+func prepareStatusBar() {
+	statusBar = tview.NewPages()
+
+	message = tview.NewTextView().SetDynamicColors(true).SetText("Loading...")
+	statusBar.AddPage(messagePage, message, true, true)
+
+	statusBar.AddPage(shortcutsPage,
+		tview.NewGrid().
+			SetColumns(0, 0, 0, 0).
+			SetRows(0).
+			AddItem(tview.NewTextView().SetText("Shortcuts: Alt+.(dot)"), 0, 0, 1, 1, 0, 0, false).
+			AddItem(tview.NewTextView().SetText("New Project: n").SetTextAlign(tview.AlignCenter), 0, 1, 1, 1, 0, 0, false).
+			AddItem(tview.NewTextView().SetText("New Task: t").SetTextAlign(tview.AlignCenter), 0, 2, 1, 1, 0, 0, false).
+			AddItem(tview.NewTextView().SetText("Quit: Ctrl+C").SetTextAlign(tview.AlignRight), 0, 3, 1, 1, 0, 0, false),
+		true,
+		true,
+	)
+}

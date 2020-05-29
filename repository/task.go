@@ -13,6 +13,7 @@ type TaskRepository interface {
 	GetByID(ID string) (model.Task, error)
 	GetByUUID(UUID string) (model.Task, error)
 	Create(project model.Project, title, details, UUID string, dueDate int64) (model.Task, error)
-	Update(p *model.Task) error
-	Delete(p *model.Task) error
+	Update(t *model.Task) error
+	UpdateField(t *model.Task, field string, value interface{}) error
+	Delete(t *model.Task) error
 }
