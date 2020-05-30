@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/gdamore/tcell"
@@ -10,14 +11,15 @@ import (
 )
 
 var (
-	taskName         *tview.TextView
-	taskDate         *tview.InputField
-	taskDetailView   *femto.View
-	taskStatusToggle *tview.Button
-	colorscheme      femto.Colorscheme
+	taskName, taskDateDisplay *tview.TextView
+	taskDate                  *tview.InputField
+	taskDetailView            *femto.View
+	taskStatusToggle          *tview.Button
+	colorscheme               femto.Colorscheme
 )
 
 const dateLayoutISO = "2006-01-02"
+const dateLayoutHuman = "02 Jan, Monday"
 
 func prepareDetailPane() {
 	taskName = tview.NewTextView().SetDynamicColors(true)
@@ -69,35 +71,36 @@ func prepareDetailPane() {
 }
 
 func makeDateRow() *tview.Flex {
+	taskDateDisplay = tview.NewTextView().SetDynamicColors(true)
 	taskDate = makeLightTextInput("yyyy-mm-dd").
-		SetLabel("Due Date: ").
+		SetLabel("Set:").
 		SetLabelColor(tcell.ColorGray).
-		SetFieldWidth(12)
+		SetFieldWidth(12).
+		SetDoneFunc(func(key tcell.Key) {
+			switch key {
+			case tcell.KeyEnter:
+				setTaskDate(parseDateInputOrCurrent(taskDate.GetText()).Unix(), true)
+			case tcell.KeyEsc:
+				setTaskDate(currentTask.DueDate, false)
+			}
+		})
 
 	todaySelector := func() {
-		taskDate.SetText(time.Now().Format(dateLayoutISO))
+		setTaskDate(time.Now().Unix(), true)
 	}
 
 	nextDaySelector := func() {
-		currentText := taskDate.GetText()
-		if date, err := time.Parse(dateLayoutISO, currentText); err == nil {
-			taskDate.SetText(date.AddDate(0, 0, 1).Format(dateLayoutISO))
-		} else {
-			taskDate.SetText(time.Now().AddDate(0, 0, 1).Format(dateLayoutISO))
-		}
+		setTaskDate(parseDateInputOrCurrent(taskDate.GetText()).AddDate(0, 0, 1).Unix(), true)
 	}
 
 	prevDaySelector := func() {
-		currentText := taskDate.GetText()
-		if date, err := time.Parse(dateLayoutISO, currentText); err == nil {
-			taskDate.SetText(date.AddDate(0, 0, -1).Format(dateLayoutISO))
-		} else {
-			taskDate.SetText(time.Now().AddDate(0, 0, -1).Format(dateLayoutISO))
-		}
+		setTaskDate(parseDateInputOrCurrent(taskDate.GetText()).AddDate(0, 0, -1).Unix(), true)
 	}
 
 	return tview.NewFlex().
-		AddItem(taskDate, 25, 2, true).
+		AddItem(taskDateDisplay, 0, 2, true).
+		AddItem(taskDate, 14, 0, true).
+		AddItem(nil, 1, 0, false).
 		AddItem(nil, 1, 0, false).
 		AddItem(makeButton("today", todaySelector), 8, 1, false).
 		AddItem(nil, 1, 0, false).
@@ -122,6 +125,32 @@ func setStatusToggle(idx int) {
 		action(idx, "Resume", tcell.ColorMaroon, false)
 	} else {
 		action(idx, "Complete", tcell.ColorDarkGreen, true)
+	}
+}
+
+// Display Task date in detail pane, and update date if asked to
+func setTaskDate(unixDate int64, update bool) {
+	if update {
+		currentTask.DueDate = unixDate
+		if err := taskRepo.UpdateField(currentTask, "DueDate", unixDate); err != nil {
+			showMessage("Could not update due date: " + err.Error())
+			return
+		}
+	}
+
+	if unixDate != 0 {
+		due := time.Unix(unixDate, 0)
+		color := "white"
+		humanDate := due.Format(dateLayoutHuman)
+
+		if due.Before(time.Now()) {
+			color = "red"
+		}
+		taskDateDisplay.SetText(fmt.Sprintf("Due: [%s]%s", color, humanDate))
+		taskDate.SetText(due.Format(dateLayoutISO))
+	} else {
+		taskDate.SetText("")
+		taskDateDisplay.SetText("Due: [::d]Not Set")
 	}
 }
 

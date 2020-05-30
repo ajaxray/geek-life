@@ -53,11 +53,7 @@ func loadTask(idx int) {
 	taskDetailView.Buf = makeBufferFromString(currentTask.Details)
 	taskDetailView.SetColorscheme(colorscheme)
 	taskDetailView.Start()
-
-	taskDate.SetText("")
-	if currentTask.DueDate != 0 {
-		taskDate.SetText(time.Unix(currentTask.DueDate, 0).Format(dateLayoutISO))
-	}
+	setTaskDate(currentTask.DueDate, false)
 
 	contents.AddItem(detailPane, 0, 3, false)
 	setStatusToggle(idx)

@@ -35,6 +35,15 @@ func makeLightTextInput(placeholder string) *tview.InputField {
 		SetFieldBackgroundColor(tcell.ColorGray)
 }
 
+// If input text is a valid date, parse it. Or get current date
+func parseDateInputOrCurrent(inputText string) time.Time {
+	if date, err := time.Parse(dateLayoutISO, inputText); err == nil {
+		return date
+	} else {
+		return time.Now()
+	}
+}
+
 func showMessage(text string) {
 	message.SetText(text)
 	statusBar.SwitchToPage(messagePage)
