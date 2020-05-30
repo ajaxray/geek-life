@@ -146,11 +146,11 @@ func setTaskDate(unixDate int64, update bool) {
 		if due.Before(time.Now()) {
 			color = "red"
 		}
-		taskDateDisplay.SetText(fmt.Sprintf("Due: [%s]%s", color, humanDate))
+		taskDateDisplay.SetText(fmt.Sprintf("[::u]D[::-]ue: [%s]%s", color, humanDate))
 		taskDate.SetText(due.Format(dateLayoutISO))
 	} else {
 		taskDate.SetText("")
-		taskDateDisplay.SetText("Due: [::d]Not Set")
+		taskDateDisplay.SetText("[::u]D[::-]ue: [::d]Not Set")
 	}
 }
 
@@ -209,4 +209,15 @@ func deactivateEditor() {
 	taskDetailView.Readonly = true
 	taskDetailView.SetBorderColor(tcell.ColorLightSlateGray)
 	app.SetFocus(detailPane)
+}
+
+func handleDetailPaneShortcuts(event *tcell.EventKey) *tcell.EventKey {
+	switch event.Rune() {
+	case 'e':
+		activateEditor()
+	case 'd':
+		app.SetFocus(taskDate)
+	}
+
+	return event
 }

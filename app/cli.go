@@ -74,24 +74,23 @@ func setKeyboardShortcuts(projectPane *tview.Flex, taskPane *tview.Flex) *tview.
 		if ignoreKeyEvt() {
 			return event
 		}
+
+		// Handle based on current focus. Handlers may modify event
+		switch {
+		case projectPane.HasFocus():
+			event = handleProjectPaneShortcuts(event)
+		case taskPane.HasFocus():
+			event = handleTaskPaneShortcuts(event)
+		case detailPane.HasFocus():
+			event = handleDetailPaneShortcuts(event)
+		}
+
+		// Global shortcuts
 		switch event.Rune() {
 		case 'p':
 			app.SetFocus(projectPane)
 		case 't':
 			app.SetFocus(taskPane)
-		case 'n':
-			if projectPane.HasFocus() {
-				app.SetFocus(newProject)
-			} else if taskPane.HasFocus() {
-				app.SetFocus(newTask)
-			}
-		case 'e':
-			if detailPane.HasFocus() {
-				activateEditor()
-			} else {
-				// @TODO : Remove
-				showMessage(reflect.TypeOf(app.GetFocus()).String())
-			}
 		case 'f':
 			// @TODO : Remove
 			showMessage(reflect.TypeOf(app.GetFocus()).String())

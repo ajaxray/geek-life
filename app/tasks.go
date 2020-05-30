@@ -78,3 +78,12 @@ func makeTaskListingTitle(task model.Task) string {
 	}
 	return fmt.Sprintf("[%s]%s %s", getTaskTitleColor(task), checkbox, task.Title)
 }
+
+func handleTaskPaneShortcuts(event *tcell.EventKey) *tcell.EventKey {
+	switch event.Rune() {
+	case 'n':
+		app.SetFocus(newTask)
+	}
+
+	return event
+}

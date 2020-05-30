@@ -76,3 +76,12 @@ func loadProject(idx int) {
 
 	contents.RemoveItem(detailPane)
 }
+
+func handleProjectPaneShortcuts(event *tcell.EventKey) *tcell.EventKey {
+	switch event.Rune() {
+	case 'n':
+		app.SetFocus(newProject)
+	}
+
+	return event
+}
