@@ -58,13 +58,16 @@ Then rename and give it permission to execute. For example
 ```bash
 mv geek-life_linux-amd64 geek-life  
 sudo chmod +x geek-life
+./geek-life
 ```
 
-If you want to install it globally (run from any directory of your system), put it in your systems $PATH directory.
+I recommend installing it globally (to run from any directory of your system). It's easy, just put it in your systems $PATH directory.
 ```bash
 sudo mv geek-life /usr/local/bin/geek-life
+geek-life
 ```
-Done! 
+
+Done! Manage your tasks your way!
 
 ## :keyboard: Keyboard shortcuts
 
