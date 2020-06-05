@@ -14,21 +14,22 @@ import (
 )
 
 var (
-	app                               *tview.Application
-	newProject, newTask               *tview.InputField
-	projectList, taskList             *tview.List
-	projectPane, taskPane, detailPane *tview.Flex
-	layout, contents                  *tview.Flex
-	statusBar                         *tview.Pages
-	message                           *tview.TextView
-	shortcutsPage, messagePage        string = "shortcuts", "message"
+	app                            *tview.Application
+	newProject, newTask            *tview.InputField
+	projectList, taskList          *tview.List
+	projectPane, projectDetailPane *tview.Flex
+	taskPane, taskDetailPane       *tview.Flex
+	layout, contents               *tview.Flex
+	statusBar                      *tview.Pages
+	message                        *tview.TextView
+	shortcutsPage, messagePage     string = "shortcuts", "message"
 
 	db          *storm.DB
 	projectRepo repository.ProjectRepository
 	taskRepo    repository.TaskRepository
 
 	projects       []model.Project
-	currentProject model.Project
+	currentProject *model.Project
 )
 
 func main() {
@@ -40,7 +41,7 @@ func main() {
 	projectRepo = repo.NewProjectRepository(db)
 	taskRepo = repo.NewTaskRepository(db)
 
-	titleText := tview.NewTextView().SetText("[lime::b]Geek-life [::-]- life management for geeks!").SetDynamicColors(true)
+	titleText := tview.NewTextView().SetText("[lime::b]Geek-life [::-]- Task Manager for geeks!").SetDynamicColors(true)
 	cloudStatus := tview.NewTextView().SetText("[::d]Cloud Sync: off").SetTextAlign(tview.AlignRight).SetDynamicColors(true)
 
 	titleBar := tview.NewFlex().
@@ -48,6 +49,7 @@ func main() {
 		AddItem(cloudStatus, 0, 1, false)
 
 	prepareProjectPane()
+	prepareProjectDetail()
 	prepareTaskPane()
 	prepareStatusBar()
 	prepareDetailPane()
@@ -55,21 +57,20 @@ func main() {
 	contents = tview.NewFlex().
 		AddItem(projectPane, 25, 1, true).
 		AddItem(taskPane, 0, 2, false)
-		//AddItem(detailPane, 0, 3, true)
 
 	layout = tview.NewFlex().SetDirection(tview.FlexRow).
 		AddItem(titleBar, 2, 1, false).
 		AddItem(contents, 0, 2, true).
 		AddItem(statusBar, 1, 1, false)
 
-	setKeyboardShortcuts(projectPane, taskPane)
+	setKeyboardShortcuts()
 
 	if err := app.SetRoot(layout, true).EnableMouse(true).Run(); err != nil {
 		panic(err)
 	}
 }
 
-func setKeyboardShortcuts(projectPane *tview.Flex, taskPane *tview.Flex) *tview.Application {
+func setKeyboardShortcuts() *tview.Application {
 	return app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		if ignoreKeyEvt() {
 			return event
@@ -81,7 +82,7 @@ func setKeyboardShortcuts(projectPane *tview.Flex, taskPane *tview.Flex) *tview.
 			event = handleProjectPaneShortcuts(event)
 		case taskPane.HasFocus():
 			event = handleTaskPaneShortcuts(event)
-		case detailPane.HasFocus():
+		case taskDetailPane.HasFocus():
 			event = handleDetailPaneShortcuts(event)
 		}
 
@@ -110,9 +111,9 @@ func prepareStatusBar() {
 		tview.NewGrid().
 			SetColumns(0, 0, 0, 0).
 			SetRows(0).
-			AddItem(tview.NewTextView().SetText("Shortcuts: Alt+.(dot)"), 0, 0, 1, 1, 0, 0, false).
-			AddItem(tview.NewTextView().SetText("New Project: n").SetTextAlign(tview.AlignCenter), 0, 1, 1, 1, 0, 0, false).
-			AddItem(tview.NewTextView().SetText("New Task: t").SetTextAlign(tview.AlignCenter), 0, 2, 1, 1, 0, 0, false).
+			AddItem(tview.NewTextView().SetText("Navigate List: ↓/↑"), 0, 0, 1, 1, 0, 0, false).
+			AddItem(tview.NewTextView().SetText("New Task/Project: n").SetTextAlign(tview.AlignCenter), 0, 1, 1, 1, 0, 0, false).
+			AddItem(tview.NewTextView().SetText("Step back: Esc").SetTextAlign(tview.AlignCenter), 0, 2, 1, 1, 0, 0, false).
 			AddItem(tview.NewTextView().SetText("Quit: Ctrl+C").SetTextAlign(tview.AlignRight), 0, 3, 1, 1, 0, 0, false),
 		true,
 		true,

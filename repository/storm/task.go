@@ -64,5 +64,5 @@ func (t *taskRepository) UpdateField(task *model.Task, field string, value inter
 }
 
 func (t *taskRepository) Delete(task *model.Task) error {
-	panic("implement me")
+	return t.DB.DeleteStruct(task)
 }

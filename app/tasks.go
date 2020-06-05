@@ -11,8 +11,9 @@ import (
 )
 
 var (
-	tasks       []model.Task
-	currentTask *model.Task
+	tasks          []model.Task
+	currentTask    *model.Task
+	currentTaskIdx int
 )
 
 func prepareTaskPane() {
@@ -25,12 +26,13 @@ func prepareTaskPane() {
 		SetDoneFunc(func(key tcell.Key) {
 			switch key {
 			case tcell.KeyEnter:
-				task, err := taskRepo.Create(currentProject, newTask.GetText(), "", "", time.Now().Unix())
+				task, err := taskRepo.Create(*currentProject, newTask.GetText(), "", "", 0)
 				if err != nil {
 					showMessage("[red::]Could not create Task:" + err.Error())
 				}
 
-				taskList.AddItem(task.Title, "", 0, nil)
+				tasks = append(tasks, task)
+				addTaskToList(task, len(tasks)-1)
 				newTask.SetText("")
 			case tcell.KeyEsc:
 				app.SetFocus(taskPane)
@@ -45,26 +47,38 @@ func prepareTaskPane() {
 	taskPane.SetBorder(true).SetTitle("[::u]T[::-]asks")
 }
 
+func addTaskToList(task model.Task, i int) *tview.List {
+	return taskList.AddItem(makeTaskListingTitle(task), "", 0, func(taskidx int) func() {
+		return func() { loadTask(taskidx) }
+	}(i))
+}
+
 func loadTask(idx int) {
-	contents.RemoveItem(detailPane)
-	currentTask = &tasks[idx]
+	removeThirdCol()
+	currentTaskIdx = idx
+	currentTask = &tasks[currentTaskIdx]
 
 	taskName.SetText(fmt.Sprintf("[%s::b]# %s", getTaskTitleColor(*currentTask), currentTask.Title))
 	taskDetailView.Buf = makeBufferFromString(currentTask.Details)
 	taskDetailView.SetColorscheme(colorscheme)
 	taskDetailView.Start()
 	setTaskDate(currentTask.DueDate, false)
+	setStatusToggle()
 
-	contents.AddItem(detailPane, 0, 3, false)
-	setStatusToggle(idx)
+	contents.AddItem(taskDetailPane, 0, 3, false)
 	deactivateEditor()
 }
 
+func removeThirdCol() {
+	contents.RemoveItem(taskDetailPane)
+	contents.RemoveItem(projectDetailPane)
+}
+
 func getTaskTitleColor(task model.Task) string {
-	colorName := "whitesmoke"
+	colorName := "olive"
 	if task.Completed {
 		colorName = "lime"
-	} else if task.DueDate != 0 && task.DueDate < time.Now().Unix() {
+	} else if task.DueDate != 0 && task.DueDate < time.Now().Truncate(24*time.Hour).Unix() {
 		colorName = "red"
 	}
 

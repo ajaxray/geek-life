@@ -13,5 +13,6 @@
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
+builds/
 /geek-life
 /geek-life.db

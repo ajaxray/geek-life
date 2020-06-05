@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"reflect"
 	"time"
 
@@ -10,11 +11,11 @@ import (
 	"github.com/ajaxray/geek-life/util"
 )
 
-func makeHorizontalLine(lineChar rune) *tview.TextView {
+func makeHorizontalLine(lineChar rune, color tcell.Color) *tview.TextView {
 	hr := tview.NewTextView()
 	hr.SetDrawFunc(func(screen tcell.Screen, x int, y int, width int, height int) (int, int, int, int) {
 		// Draw a horizontal line across the middle of the box.
-		style := tcell.StyleDefault.Foreground(tcell.ColorWhite).Background(tcell.ColorBlack)
+		style := tcell.StyleDefault.Foreground(color).Background(tcell.ColorBlack)
 		centerY := y + height/2
 		for cx := x; cx < x+width; cx++ {
 			screen.SetContent(cx, centerY, lineChar, nil, style)
@@ -30,7 +31,7 @@ func makeHorizontalLine(lineChar rune) *tview.TextView {
 func makeLightTextInput(placeholder string) *tview.InputField {
 	return tview.NewInputField().
 		SetPlaceholder(placeholder).
-		SetPlaceholderTextColor(tcell.ColorLightSlateGray).
+		SetPlaceholderTextColor(tcell.ColorYellow).
 		SetFieldTextColor(tcell.ColorBlack).
 		SetFieldBackgroundColor(tcell.ColorGray)
 }
@@ -49,11 +50,16 @@ func showMessage(text string) {
 	statusBar.SwitchToPage(messagePage)
 
 	go func() {
+		time.Sleep(time.Second * 5)
 		app.QueueUpdateDraw(func() {
-			time.Sleep(time.Second * 5)
 			statusBar.SwitchToPage(shortcutsPage)
 		})
 	}()
+}
+
+func yetToImplement(feature string) func() {
+	message := fmt.Sprintf("[yellow]%s is yet to implement. Please Check in next version.", feature)
+	return func() { showMessage(message) }
 }
 
 func makeButton(label string, handler func()) *tview.Button {

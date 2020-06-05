@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/asdine/storm/v3"
 	"github.com/gdamore/tcell"
@@ -9,17 +10,8 @@ import (
 )
 
 func prepareProjectPane() {
-	var err error
-	projects, err = projectRepo.GetAll()
-	if err != nil {
-		showMessage("Could not load Projects: " + err.Error())
-	}
-
 	projectList = tview.NewList().ShowSecondaryText(false)
-
-	for i := range projects {
-		addProjectToList(i, false)
-	}
+	loadProjectList()
 
 	newProject = makeLightTextInput("+[New Project]").
 		SetDoneFunc(func(key tcell.Key) {
@@ -29,7 +21,7 @@ func prepareProjectPane() {
 				if err != nil {
 					showMessage("[red::]Failed to create Project:" + err.Error())
 				} else {
-					showMessage(fmt.Sprintf("[green::]Project %s created. Press n to start adding new tasks.", newProject.GetText()))
+					showMessage(fmt.Sprintf("[yellow::]Project %s created. Press n to start adding new tasks.", newProject.GetText()))
 					projects = append(projects, project)
 					addProjectToList(len(projects)-1, true)
 					newProject.SetText("")
@@ -46,6 +38,30 @@ func prepareProjectPane() {
 	projectPane.SetBorder(true).SetTitle("[::u]P[::-]rojects")
 }
 
+func loadProjectList() {
+	var err error
+	projects, err = projectRepo.GetAll()
+	if err != nil {
+		showMessage("Could not load Projects: " + err.Error())
+		return
+	}
+
+	projectList.AddItem("[::d]Dynamic Lists", "", 0, nil)
+	projectList.AddItem("[::d]"+strings.Repeat(string(tcell.RuneS3), 25), "", 0, nil)
+	projectList.AddItem("- Today", "", 0, yetToImplement("Today's Tasks"))
+	projectList.AddItem("- Upcoming", "", 0, yetToImplement("Upcoming Tasks"))
+	projectList.AddItem("- No Due Date", "", 0, yetToImplement("Unscheduled Tasks"))
+	projectList.AddItem("", "", 0, nil)
+	projectList.AddItem("[::d]Projects", "", 0, nil)
+	projectList.AddItem("[::d]"+strings.Repeat(string(tcell.RuneS3), 25), "", 0, nil)
+
+	for i := range projects {
+		addProjectToList(i, false)
+	}
+
+	projectList.SetCurrentItem(6) // Select Projects, as dynamic lists are not ready
+}
+
 func addProjectToList(i int, selectItem bool) {
 	// To avoid overriding of loop variables - https://www.calhoun.io/gotchas-and-common-mistakes-with-closures-in-go/
 	projectList.AddItem("- "+projects[i].Title, "", 0, func(idx int) func() {
@@ -53,28 +69,28 @@ func addProjectToList(i int, selectItem bool) {
 	}(i))
 
 	if selectItem {
-		projectList.SetCurrentItem(i)
+		projectList.SetCurrentItem(projectList.GetItemCount() - 1)
 		loadProject(i)
 	}
 }
 
 func loadProject(idx int) {
-	currentProject = projects[idx]
+	currentProject = &projects[idx]
 	taskList.Clear()
 	app.SetFocus(taskPane)
 	var err error
 
-	if tasks, err = taskRepo.GetAllByProject(currentProject); err != nil && err != storm.ErrNotFound {
+	if tasks, err = taskRepo.GetAllByProject(*currentProject); err != nil && err != storm.ErrNotFound {
 		showMessage("[red::]Error: " + err.Error())
 	}
 
 	for i, task := range tasks {
-		taskList.AddItem(makeTaskListingTitle(task), "", 0, func(taskidx int) func() {
-			return func() { loadTask(taskidx) }
-		}(i))
+		addTaskToList(task, i)
 	}
 
-	contents.RemoveItem(detailPane)
+	removeThirdCol()
+	projectDetailPane.SetTitle("[::b]" + currentProject.Title)
+	contents.AddItem(projectDetailPane, 25, 0, false)
 }
 
 func handleProjectPaneShortcuts(event *tcell.EventKey) *tcell.EventKey {
