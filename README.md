@@ -1,19 +1,25 @@
-geek-life - The CLI Task Manager for Geeks :technologist:
+The CLI Task Manager for Geeks :technologist:
 =========
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Go Report Card](https://goreportcard.com/badge/github.com/ajaxray/geek-life)](https://goreportcard.com/report/github.com/ajaxray/geek-life)
 
 
-:superhero: Command Line hero?     
+:superhero: Developer / DevOps / Sysadmin? A command line hero?     
 :computer: Live with the dark terminal?  
 :memo: Think in Markdown?  
 
 **Finally!** A full featured task manager for YOU! 
 
-![Geek-life overview](screens/geek-life_v1.gif "Geek-life overview")
+<a href="https://raw.githubusercontent.com/ajaxray/geek-life/master/screens/geek-life_v1.gif" target="_blank">
 
-### Highlights
+![Geek-life overview](screens/geek-life_v1_static.png "Geek-life overview")
+Click to see it moving (GIF)
+</a>
+ 
+
+
+### :zap: Highlights
 
 - For ninjas - do things faster with keyboard shortcuts
 - Markdown lovers, feel at :house:! You'll see markdown everywhere.
@@ -22,7 +28,7 @@ geek-life - The CLI Task Manager for Geeks :technologist:
 - Task note editor with markdown syntax highlighting<sup>2</sup>
 - Full mouse support
 
-### Roadmap
+### :compass: Roadmap
 - [x] Create Project
 - [x] Delete Project
 - [ ] Edit Project
@@ -44,7 +50,7 @@ geek-life - The CLI Task Manager for Geeks :technologist:
 - [ ] [Havitica](https://habitica.com/)<sup>3</sup> integration - Use it as Habitica client or use Habitica for cloud backup
 - [ ] Time tracking
 
-### Ready for action (installing and running)
+### :arrow_down: Ready for action (installing and running)
 
 It's just a single binary file, **no external dependencies**. 
 Just download the appropriate version of [executable from latest release](https://github.com/ajaxray/geek-life/releases) for your OS. 
@@ -60,7 +66,7 @@ sudo mv geek-life /usr/local/bin/geek-life
 ```
 Done! 
 
-## Keyboard shortcuts
+## :keyboard: Keyboard shortcuts
 
 Some shortcuts are global, some are contextual. 
 Contextual shortcuts will be applied according to focused pane/element.  
@@ -82,7 +88,7 @@ In case writing in a text input (e,g, new project/task, due date), you have to `
 | Task Detail | `e` | Activate note editor for modification |
 | Active Note Editor | `Esc` | Deactivate note editor and save content |
 
-*Tips about using shortcuts efficiently:*  
+**Tips about using shortcuts efficiently:**  
 
 - `Esc` will bring you a step back - to previous pane in most cases.
 - When you're in Project or Task list, use `↓`/`↑` to navigate the list.
@@ -91,9 +97,9 @@ In case writing in a text input (e,g, new project/task, due date), you have to `
 - After creating new Task, focus will stay in "new task" input. So that you can add tasks quickly one after another. 
 - After creating new Task, Press `Esc` when you're done creating tasks. 
 
-## Building blocks
+## :hammer_and_wrench: Building blocks
 
-- Made with :love: and [golang](https://golang.org/) 1.14 *(you don't need golang to run it)*
+- Made with :heart: and [golang](https://golang.org/) 1.14 *(you don't need golang to run it)*
 - Designed with [tview](https://github.com/rivo/tview) - interactive widgets for terminal-based UI
 - Task Note editor made with [femto](https://github.com/pgavlin/femto)  
 - Datastore is [storm](https://github.com/asdine/storm) - a powerful toolkit for [BoltDB](https://github.com/etcd-io/bbolt)
@@ -101,10 +107,10 @@ In case writing in a text input (e,g, new project/task, due date), you have to `
 ### Contribute
 
 If you fix a bug or want to add/improve a feature, 
-and it's alligned with the focus (merging with ease) of this tool, 
+and it's aligned with the focus (merging with ease) of this app, 
 I will be glad to accept your PR. :) 
 
-## You may ask...
+## :questions: You may ask...
 
 #### Where is the data stored? Can I change the location?
 
