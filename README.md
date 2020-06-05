@@ -113,7 +113,7 @@ If you fix a bug or want to add/improve a feature,
 and it's aligned with the focus (merging with ease) of this app, 
 I will be glad to accept your PR. :) 
 
-## :questions: You may ask...
+## :question: You may ask...
 
 #### Where is the data stored? Can I change the location?
 
@@ -137,7 +137,7 @@ You may :thumbsup: issues if you want to increase priority of a feature.
 ---
 ### Footnotes 
 1. In my Macbook Air, 1.6 GHz Dual-Core Intel Core i5, RAM: 8 GB 1600 MHz DDR3
-2. Use [monakai](https://github.com/sickill/vim-monokai) color scheme for markdown syntax
+2. Using [monakai](https://github.com/sickill/vim-monokai) color scheme for markdown syntax
 3. Habitica is a free habit and productivity app that treats your real life like a game
 
 ---
