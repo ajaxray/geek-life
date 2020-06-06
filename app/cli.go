@@ -42,7 +42,7 @@ func main() {
 	taskRepo = repo.NewTaskRepository(db)
 
 	titleText := tview.NewTextView().SetText("[lime::b]Geek-life [::-]- Task Manager for geeks!").SetDynamicColors(true)
-	cloudStatus := tview.NewTextView().SetText("[::d]Version: 0.0.1").SetTextAlign(tview.AlignRight).SetDynamicColors(true)
+	cloudStatus := tview.NewTextView().SetText("[::d]Version: 0.0.3").SetTextAlign(tview.AlignRight).SetDynamicColors(true)
 
 	titleBar := tview.NewFlex().
 		AddItem(titleText, 0, 2, false).

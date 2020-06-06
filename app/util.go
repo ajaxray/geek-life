@@ -40,9 +40,9 @@ func makeLightTextInput(placeholder string) *tview.InputField {
 func parseDateInputOrCurrent(inputText string) time.Time {
 	if date, err := time.Parse(dateLayoutISO, inputText); err == nil {
 		return date
-	} else {
-		return time.Now()
 	}
+
+	return time.Now()
 }
 
 func showMessage(text string) {

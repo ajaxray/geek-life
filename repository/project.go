@@ -2,6 +2,7 @@ package repository
 
 import "github.com/ajaxray/geek-life/model"
 
+// ProjectRepository interface defines methods of project data accessor
 type ProjectRepository interface {
 	GetAll() ([]model.Project, error)
 	GetByID(id int64) (model.Project, error)

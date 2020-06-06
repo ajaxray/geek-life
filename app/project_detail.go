@@ -25,8 +25,8 @@ func prepareProjectDetail() {
 
 func deleteCurrentProject() {
 	if currentProject != nil && projectRepo.Delete(currentProject) == nil {
-		for i, _ := range tasks {
-			taskRepo.Delete(&tasks[i])
+		for i := range tasks {
+			_ = taskRepo.Delete(&tasks[i])
 		}
 
 		showMessage("Removed Project: " + currentProject.Title)

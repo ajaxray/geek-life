@@ -17,6 +17,11 @@ func prepareProjectPane() {
 		SetDoneFunc(func(key tcell.Key) {
 			switch key {
 			case tcell.KeyEnter:
+				if len(newProject.GetText()) < 3 {
+					showMessage("[red::]Project name should be at least 3 character")
+					return
+				}
+
 				project, err := projectRepo.Create(newProject.GetText(), "")
 				if err != nil {
 					showMessage("[red::]Failed to create Project:" + err.Error())

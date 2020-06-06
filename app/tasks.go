@@ -26,6 +26,11 @@ func prepareTaskPane() {
 		SetDoneFunc(func(key tcell.Key) {
 			switch key {
 			case tcell.KeyEnter:
+				if len(newTask.GetText()) < 3 {
+					showMessage("[red::]Task title should be at least 3 character")
+					return
+				}
+
 				task, err := taskRepo.Create(*currentProject, newTask.GetText(), "", "", 0)
 				if err != nil {
 					showMessage("[red::]Could not create Task:" + err.Error())

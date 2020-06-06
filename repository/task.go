@@ -6,6 +6,7 @@ import (
 	"github.com/ajaxray/geek-life/model"
 )
 
+// TaskRepository interface defines methods of task data accessor
 type TaskRepository interface {
 	GetAll() ([]model.Task, error)
 	GetAllByProject(project model.Project) ([]model.Task, error)

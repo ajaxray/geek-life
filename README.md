@@ -2,7 +2,7 @@ The CLI Task Manager for Geeks :technologist:
 =========
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Go Report Card](https://goreportcard.com/badge/github.com/ajaxray/geek-life)](https://goreportcard.com/report/github.com/ajaxray/geek-life)
+[![Go Report Card](https://goreportcard.com/badge/github.com/ajaxray/geek-life?version=latest)](https://goreportcard.com/report/github.com/ajaxray/geek-life)
 
 
 :superhero: Developer / DevOps / Sysadmin? A command line hero?     
@@ -19,7 +19,7 @@ Click to see it moving (GIF)
  
 
 
-### :zap: Highlights
+### :crystal_ball: Highlights
 
 - For ninjas - do things faster with keyboard shortcuts
 - Markdown lovers, feel at :house:! You'll see markdown everywhere.
@@ -28,7 +28,7 @@ Click to see it moving (GIF)
 - Task note editor with markdown syntax highlighting<sup>2</sup>
 - Full mouse support
 
-### :compass: Roadmap
+### :dart: Roadmap
 - [x] Create Project
 - [x] Delete Project
 - [ ] Edit Project
@@ -50,11 +50,12 @@ Click to see it moving (GIF)
 - [ ] [Havitica](https://habitica.com/)<sup>3</sup> integration - Use it as Habitica client or use Habitica for cloud backup
 - [ ] Time tracking
 
-### :arrow_down: Ready for action (installing and running)
+### :rocket: Ready for action (installing and running)
 
 It's just a single binary file, **no external dependencies**. 
 Just download the appropriate version of [executable from latest release](https://github.com/ajaxray/geek-life/releases) for your OS. 
-Then rename and give it permission to execute. For example
+Then rename and give it permission to execute.   
+For example:
 ```bash
 mv geek-life_linux-amd64 geek-life  
 sudo chmod +x geek-life
@@ -67,7 +68,7 @@ sudo mv geek-life /usr/local/bin/geek-life
 geek-life
 ```
 
-Done! Manage your tasks your way!
+Done! *Manage your tasks your way!* 
 
 ## :keyboard: Keyboard shortcuts
 
@@ -113,9 +114,9 @@ If you fix a bug or want to add/improve a feature,
 and it's aligned with the focus (merging with ease) of this app, 
 I will be glad to accept your PR. :) 
 
-## :question: You may ask...
+## :bulb: You may ask...
 
-#### Where is the data stored? Can I change the location?
+#### :question: Where is the data stored? Can I change the location?
 
 By default, it will try to create a db file in you home directory. 
 
@@ -126,7 +127,7 @@ In that case, just mention `DB_FILE` as an environment variable.
 DB_FILE=~/dropbox/geek-life/default.db geek-life
 ```
 
-#### How can I suggest a feature?
+#### :question: How can I suggest a feature?
 
 Just [post an issue](https://github.com/ajaxray/geek-life/issues/new) describing your desired feature/enhancement 
 and select `feature` label.
