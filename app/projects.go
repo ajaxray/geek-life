@@ -18,15 +18,15 @@ func prepareProjectPane() {
 			switch key {
 			case tcell.KeyEnter:
 				if len(newProject.GetText()) < 3 {
-					showMessage("[red::]Project name should be at least 3 character")
+					statusBar.showForSeconds("[red::]Project name should be at least 3 character", 5)
 					return
 				}
 
 				project, err := projectRepo.Create(newProject.GetText(), "")
 				if err != nil {
-					showMessage("[red::]Failed to create Project:" + err.Error())
+					statusBar.showForSeconds("[red::]Failed to create Project:"+err.Error(), 5)
 				} else {
-					showMessage(fmt.Sprintf("[yellow::]Project %s created. Press n to start adding new tasks.", newProject.GetText()))
+					statusBar.showForSeconds(fmt.Sprintf("[yellow::]Project %s created. Press n to start adding new tasks.", newProject.GetText()), 5)
 					projects = append(projects, project)
 					addProjectToList(len(projects)-1, true)
 					newProject.SetText("")
@@ -47,7 +47,7 @@ func loadProjectList() {
 	var err error
 	projects, err = projectRepo.GetAll()
 	if err != nil {
-		showMessage("Could not load Projects: " + err.Error())
+		statusBar.showForSeconds("Could not load Projects: "+err.Error(), 5)
 		return
 	}
 
@@ -86,7 +86,7 @@ func loadProject(idx int) {
 	var err error
 
 	if tasks, err = taskRepo.GetAllByProject(*currentProject); err != nil && err != storm.ErrNotFound {
-		showMessage("[red::]Error: " + err.Error())
+		statusBar.showForSeconds("[red::]Error: "+err.Error(), 5)
 	}
 
 	for i, task := range tasks {

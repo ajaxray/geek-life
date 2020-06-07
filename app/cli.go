@@ -20,9 +20,8 @@ var (
 	projectPane, projectDetailPane *tview.Flex
 	taskPane, taskDetailPane       *tview.Flex
 	layout, contents               *tview.Flex
-	statusBar                      *tview.Pages
-	message                        *tview.TextView
-	shortcutsPage, messagePage     string = "shortcuts", "message"
+
+	statusBar *StatusBar
 
 	db          *storm.DB
 	projectRepo repository.ProjectRepository
@@ -51,7 +50,7 @@ func main() {
 	prepareProjectPane()
 	prepareProjectDetail()
 	prepareTaskPane()
-	prepareStatusBar()
+	statusBar = makeStatusBar(app)
 	prepareDetailPane()
 
 	contents = tview.NewFlex().
@@ -94,28 +93,9 @@ func setKeyboardShortcuts() *tview.Application {
 			app.SetFocus(taskPane)
 		case 'f':
 			// @TODO : Remove
-			showMessage(reflect.TypeOf(app.GetFocus()).String())
+			statusBar.showForSeconds(reflect.TypeOf(app.GetFocus()).String(), 5)
 		}
 
 		return event
 	})
-}
-
-func prepareStatusBar() {
-	statusBar = tview.NewPages()
-
-	message = tview.NewTextView().SetDynamicColors(true).SetText("Loading...")
-	statusBar.AddPage(messagePage, message, true, true)
-
-	statusBar.AddPage(shortcutsPage,
-		tview.NewGrid().
-			SetColumns(0, 0, 0, 0).
-			SetRows(0).
-			AddItem(tview.NewTextView().SetText("Navigate List: ↓/↑"), 0, 0, 1, 1, 0, 0, false).
-			AddItem(tview.NewTextView().SetText("New Task/Project: n").SetTextAlign(tview.AlignCenter), 0, 1, 1, 1, 0, 0, false).
-			AddItem(tview.NewTextView().SetText("Step back: Esc").SetTextAlign(tview.AlignCenter), 0, 2, 1, 1, 0, 0, false).
-			AddItem(tview.NewTextView().SetText("Quit: Ctrl+C").SetTextAlign(tview.AlignRight), 0, 3, 1, 1, 0, 0, false),
-		true,
-		true,
-	)
 }

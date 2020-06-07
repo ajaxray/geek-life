@@ -29,7 +29,7 @@ func deleteCurrentProject() {
 			_ = taskRepo.Delete(&tasks[i])
 		}
 
-		showMessage("Removed Project: " + currentProject.Title)
+		statusBar.showForSeconds("[lime]Removed Project: "+currentProject.Title, 5)
 		removeThirdCol()
 		taskList.Clear()
 		projectList.Clear()
@@ -46,5 +46,5 @@ func clearCompletedTasks() {
 			count++
 		}
 	}
-	showMessage(fmt.Sprintf("[yellow]%d tasks cleared!", count))
+	statusBar.showForSeconds(fmt.Sprintf("[yellow]%d tasks cleared!", count), 5)
 }

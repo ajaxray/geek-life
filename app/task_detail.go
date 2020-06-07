@@ -122,7 +122,7 @@ func setTaskDate(unixDate int64, update bool) {
 	if update {
 		currentTask.DueDate = unixDate
 		if err := taskRepo.UpdateField(currentTask, "DueDate", unixDate); err != nil {
-			showMessage("Could not update due date: " + err.Error())
+			statusBar.showForSeconds("Could not update due date: "+err.Error(), 5)
 			return
 		}
 	}
@@ -163,9 +163,9 @@ func prepareDetailsEditor() {
 			currentTask.Details = taskDetailView.Buf.String()
 			err := taskRepo.Update(currentTask)
 			if err == nil {
-				showMessage("[lime]Saved task detail")
+				statusBar.showForSeconds("[lime]Saved task detail", 5)
 			} else {
-				showMessage("[red]Could not save: " + err.Error())
+				statusBar.showForSeconds("[red]Could not save: "+err.Error(), 5)
 			}
 
 			deactivateEditor()

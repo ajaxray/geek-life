@@ -45,23 +45,6 @@ func parseDateInputOrCurrent(inputText string) time.Time {
 	return time.Now()
 }
 
-func showMessage(text string) {
-	message.SetText(text)
-	statusBar.SwitchToPage(messagePage)
-
-	go func() {
-		time.Sleep(time.Second * 5)
-		app.QueueUpdateDraw(func() {
-			statusBar.SwitchToPage(shortcutsPage)
-		})
-	}()
-}
-
-func yetToImplement(feature string) func() {
-	message := fmt.Sprintf("[yellow]%s is yet to implement. Please Check in next version.", feature)
-	return func() { showMessage(message) }
-}
-
 func makeButton(label string, handler func()) *tview.Button {
 	btn := tview.NewButton(label).SetSelectedFunc(handler).
 		SetLabelColor(tcell.ColorWhite)
@@ -74,4 +57,10 @@ func makeButton(label string, handler func()) *tview.Button {
 func ignoreKeyEvt() bool {
 	textInputs := []string{"*tview.InputField", "*femto.View"}
 	return util.InArray(reflect.TypeOf(app.GetFocus()).String(), textInputs)
+}
+
+// yetToImplement - to use as callback for unimplemented features
+func yetToImplement(feature string) func() {
+	message := fmt.Sprintf("[yellow]%s is yet to implement. Please Check in next version.", feature)
+	return func() { statusBar.showForSeconds(message, 5) }
 }

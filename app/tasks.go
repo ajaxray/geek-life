@@ -27,13 +27,13 @@ func prepareTaskPane() {
 			switch key {
 			case tcell.KeyEnter:
 				if len(newTask.GetText()) < 3 {
-					showMessage("[red::]Task title should be at least 3 character")
+					statusBar.showForSeconds("[red::]Task title should be at least 3 character", 5)
 					return
 				}
 
 				task, err := taskRepo.Create(*currentProject, newTask.GetText(), "", "", 0)
 				if err != nil {
-					showMessage("[red::]Could not create Task:" + err.Error())
+					statusBar.showForSeconds("[red::]Could not create Task:"+err.Error(), 5)
 				}
 
 				tasks = append(tasks, task)

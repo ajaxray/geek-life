@@ -120,7 +120,7 @@ I will be glad to accept your PR. :)
 
 By default, it will try to create a db file in you home directory. 
 
-But as a geek, you may try to put it different location (e,g, in you dropbox for syncing).
+But as a geek, you may try to put it different location (e,g, in your dropbox for syncing).
 In that case, just mention `DB_FILE` as an environment variable.
  
 ```bash
