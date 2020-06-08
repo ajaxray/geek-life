@@ -8,7 +8,7 @@ import (
 )
 
 func prepareProjectDetail() {
-	deleteBtn := makeButton("Delete Project", deleteCurrentProject)
+	deleteBtn := makeButton("Delete Project", projectPane.removeActivateProject)
 	clearBtn := makeButton("Clear Completed Tasks", clearCompletedTasks)
 
 	deleteBtn.SetBackgroundColor(tcell.ColorRed)
@@ -23,21 +23,7 @@ func prepareProjectDetail() {
 	projectDetailPane.SetBorder(true).SetTitle("[::u]A[::-]ctions")
 }
 
-func deleteCurrentProject() {
-	if currentProject != nil && projectRepo.Delete(currentProject) == nil {
-		for i := range tasks {
-			_ = taskRepo.Delete(&tasks[i])
-		}
-
-		statusBar.showForSeconds("[lime]Removed Project: "+currentProject.Title, 5)
-		removeThirdCol()
-		taskList.Clear()
-		projectList.Clear()
-
-		loadProjectList()
-	}
-}
-
+// @TODO - Move to tasks pane
 func clearCompletedTasks() {
 	count := 0
 	for i, task := range tasks {

@@ -1,4 +1,4 @@
-The CLI Task Manager for Geeks :technologist:
+The CLI To-Do List / Task Manager for Geeks :technologist:
 =========
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -72,9 +72,12 @@ Done! *Manage your tasks your way!*
 
 ## :keyboard: Keyboard shortcuts
 
+Shortcut key for a pane/element will be marked with underline (e,g, "<u>P</u>roject" as project pane title).
+
 Some shortcuts are global, some are contextual. 
 Contextual shortcuts will be applied according to focused pane/element.  
 You'll see a currently focused pane bordered with double line. 
+ 
 
 In case writing in a text input (e,g, new project/task, due date), you have to `Enter` to submit/save. 
 

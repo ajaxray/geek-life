@@ -7,102 +7,163 @@ import (
 	"github.com/asdine/storm/v3"
 	"github.com/gdamore/tcell"
 	"github.com/rivo/tview"
+
+	"github.com/ajaxray/geek-life/model"
+	"github.com/ajaxray/geek-life/repository"
 )
 
-func prepareProjectPane() {
-	projectList = tview.NewList().ShowSecondaryText(false)
-	loadProjectList()
-
-	newProject = makeLightTextInput("+[New Project]").
-		SetDoneFunc(func(key tcell.Key) {
-			switch key {
-			case tcell.KeyEnter:
-				if len(newProject.GetText()) < 3 {
-					statusBar.showForSeconds("[red::]Project name should be at least 3 character", 5)
-					return
-				}
-
-				project, err := projectRepo.Create(newProject.GetText(), "")
-				if err != nil {
-					statusBar.showForSeconds("[red::]Failed to create Project:"+err.Error(), 5)
-				} else {
-					statusBar.showForSeconds(fmt.Sprintf("[yellow::]Project %s created. Press n to start adding new tasks.", newProject.GetText()), 5)
-					projects = append(projects, project)
-					addProjectToList(len(projects)-1, true)
-					newProject.SetText("")
-				}
-			case tcell.KeyEsc:
-				app.SetFocus(projectPane)
-			}
-		})
-
-	projectPane = tview.NewFlex().SetDirection(tview.FlexRow).
-		AddItem(projectList, 0, 1, true).
-		AddItem(newProject, 1, 0, false)
-
-	projectPane.SetBorder(true).SetTitle("[::u]P[::-]rojects")
+type ProjectPane struct {
+	*tview.Flex
+	projects            []model.Project
+	list                *tview.List
+	newProject          *tview.InputField
+	repo                repository.ProjectRepository
+	activeProject       *model.Project
+	projectListStarting int // The index in list where project names starts
 }
 
-func loadProjectList() {
+func NewProjectPane(repo repository.ProjectRepository) *ProjectPane {
+	pane := ProjectPane{
+		Flex:       tview.NewFlex().SetDirection(tview.FlexRow),
+		list:       tview.NewList().ShowSecondaryText(false),
+		newProject: makeLightTextInput("+[New Project]"),
+		repo:       repo,
+	}
+
+	pane.newProject.SetDoneFunc(func(key tcell.Key) {
+		switch key {
+		case tcell.KeyEnter:
+			pane.addNewProject()
+		case tcell.KeyEsc:
+			app.SetFocus(projectPane)
+		}
+	})
+
+	pane.AddItem(pane.list, 0, 1, true).
+		AddItem(pane.newProject, 1, 0, false)
+
+	pane.SetBorder(true).SetTitle("[::u]P[::-]rojects")
+	pane.loadListItems(false)
+
+	return &pane
+}
+
+func (pane *ProjectPane) addNewProject() {
+	name := pane.newProject.GetText()
+	if len(name) < 3 {
+		statusBar.showForSeconds("[red::]Project name should be at least 3 character", 5)
+		return
+	}
+
+	project, err := pane.repo.Create(name, "")
+	if err != nil {
+		statusBar.showForSeconds("[red::]Failed to create Project:"+err.Error(), 5)
+	} else {
+		statusBar.showForSeconds(fmt.Sprintf("[yellow::]Project %s created. Press n to start adding new tasks.", name), 5)
+		pane.projects = append(pane.projects, project)
+		pane.addProjectToList(len(pane.projects)-1, true)
+		pane.newProject.SetText("")
+	}
+}
+
+func (pane *ProjectPane) addDynamicLists() {
+	pane.addSection("Dynamic Lists")
+	pane.list.AddItem("- Today", "", 0, yetToImplement("Today's Tasks"))
+	pane.list.AddItem("- Upcoming", "", 0, yetToImplement("Upcoming Tasks"))
+	pane.list.AddItem("- No Due Date", "", 0, yetToImplement("Unscheduled Tasks"))
+}
+
+func (pane *ProjectPane) addProjectList() {
+	pane.addSection("Projects")
+	pane.projectListStarting = pane.list.GetItemCount()
+
 	var err error
-	projects, err = projectRepo.GetAll()
+	pane.projects, err = pane.repo.GetAll()
 	if err != nil {
 		statusBar.showForSeconds("Could not load Projects: "+err.Error(), 5)
 		return
 	}
 
-	projectList.AddItem("[::d]Dynamic Lists", "", 0, nil)
-	projectList.AddItem("[::d]"+strings.Repeat(string(tcell.RuneS3), 25), "", 0, nil)
-	projectList.AddItem("- Today", "", 0, yetToImplement("Today's Tasks"))
-	projectList.AddItem("- Upcoming", "", 0, yetToImplement("Upcoming Tasks"))
-	projectList.AddItem("- No Due Date", "", 0, yetToImplement("Unscheduled Tasks"))
-	projectList.AddItem("", "", 0, nil)
-	projectList.AddItem("[::d]Projects", "", 0, nil)
-	projectList.AddItem("[::d]"+strings.Repeat(string(tcell.RuneS3), 25), "", 0, nil)
-
-	for i := range projects {
-		addProjectToList(i, false)
+	for i := range pane.projects {
+		pane.addProjectToList(i, false)
 	}
 
-	projectList.SetCurrentItem(6) // Select Projects, as dynamic lists are not ready
+	pane.list.SetCurrentItem(pane.projectListStarting)
 }
 
-func addProjectToList(i int, selectItem bool) {
+func (pane *ProjectPane) addProjectToList(i int, selectItem bool) {
 	// To avoid overriding of loop variables - https://www.calhoun.io/gotchas-and-common-mistakes-with-closures-in-go/
-	projectList.AddItem("- "+projects[i].Title, "", 0, func(idx int) func() {
-		return func() { loadProject(idx) }
+	pane.list.AddItem("- "+pane.projects[i].Title, "", 0, func(idx int) func() {
+		return func() { pane.activateProject(idx) }
 	}(i))
 
 	if selectItem {
-		projectList.SetCurrentItem(projectList.GetItemCount() - 1)
-		loadProject(i)
+		pane.list.SetCurrentItem(-1)
+		pane.activateProject(i)
 	}
 }
 
-func loadProject(idx int) {
-	currentProject = &projects[idx]
+func (pane *ProjectPane) addSection(name string) {
+	pane.list.AddItem("[::d]"+name, "", 0, nil)
+	pane.list.AddItem("[::d]"+strings.Repeat(string(tcell.RuneS3), 25), "", 0, nil)
+}
+
+func (pane *ProjectPane) handleShortcuts(event *tcell.EventKey) *tcell.EventKey {
+	switch event.Rune() {
+	case 'n':
+		app.SetFocus(pane.newProject)
+	}
+
+	return event
+}
+
+func (pane *ProjectPane) activateProject(idx int) {
+	pane.activeProject = &pane.projects[idx]
+	loadProjectTasks()
+
+	removeThirdCol()
+	projectDetailPane.SetTitle("[::b]" + pane.activeProject.Title)
+	contents.AddItem(projectDetailPane, 25, 0, false)
+}
+
+func (pane *ProjectPane) removeActivateProject() {
+	if pane.activeProject != nil && pane.repo.Delete(pane.activeProject) == nil {
+
+		// @TODO - Move to tasks pane
+		for i := range tasks {
+			_ = taskRepo.Delete(&tasks[i])
+		}
+
+		statusBar.showForSeconds("[lime]Removed Project: "+pane.activeProject.Title, 5)
+		removeThirdCol()
+		taskList.Clear()
+
+		pane.loadListItems(true)
+	}
+}
+
+func (pane *ProjectPane) loadListItems(focus bool) {
+	pane.list.Clear()
+	pane.addDynamicLists()
+	pane.list.AddItem("", "", 0, nil)
+	pane.addProjectList()
+
+	if focus {
+		app.SetFocus(pane)
+	}
+}
+
+// @TODO - Should be broken down into respective pane
+func loadProjectTasks() {
 	taskList.Clear()
 	app.SetFocus(taskPane)
 	var err error
 
-	if tasks, err = taskRepo.GetAllByProject(*currentProject); err != nil && err != storm.ErrNotFound {
+	if tasks, err = taskRepo.GetAllByProject(*projectPane.activeProject); err != nil && err != storm.ErrNotFound {
 		statusBar.showForSeconds("[red::]Error: "+err.Error(), 5)
 	}
 
 	for i, task := range tasks {
 		addTaskToList(task, i)
 	}
-
-	removeThirdCol()
-	projectDetailPane.SetTitle("[::b]" + currentProject.Title)
-	contents.AddItem(projectDetailPane, 25, 0, false)
-}
-
-func handleProjectPaneShortcuts(event *tcell.EventKey) *tcell.EventKey {
-	switch event.Rune() {
-	case 'n':
-		app.SetFocus(newProject)
-	}
-
-	return event
 }

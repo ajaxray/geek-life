@@ -1,34 +1,29 @@
 package main
 
 import (
-	"reflect"
-
 	"github.com/asdine/storm/v3"
 	"github.com/gdamore/tcell"
 	"github.com/rivo/tview"
 
-	"github.com/ajaxray/geek-life/model"
 	"github.com/ajaxray/geek-life/repository"
 	repo "github.com/ajaxray/geek-life/repository/storm"
 	"github.com/ajaxray/geek-life/util"
 )
 
 var (
-	app                            *tview.Application
-	newProject, newTask            *tview.InputField
-	projectList, taskList          *tview.List
-	projectPane, projectDetailPane *tview.Flex
-	taskPane, taskDetailPane       *tview.Flex
-	layout, contents               *tview.Flex
+	app                      *tview.Application
+	newTask                  *tview.InputField
+	taskList                 *tview.List
+	projectDetailPane        *tview.Flex
+	taskPane, taskDetailPane *tview.Flex
+	layout, contents         *tview.Flex
 
-	statusBar *StatusBar
+	statusBar   *StatusBar
+	projectPane *ProjectPane
 
 	db          *storm.DB
 	projectRepo repository.ProjectRepository
 	taskRepo    repository.TaskRepository
-
-	projects       []model.Project
-	currentProject *model.Project
 )
 
 func main() {
@@ -47,10 +42,10 @@ func main() {
 		AddItem(titleText, 0, 2, false).
 		AddItem(cloudStatus, 0, 1, false)
 
-	prepareProjectPane()
-	prepareProjectDetail()
-	prepareTaskPane()
 	statusBar = makeStatusBar(app)
+	projectPane = NewProjectPane(projectRepo)
+	prepareTaskPane()
+	prepareProjectDetail()
 	prepareDetailPane()
 
 	contents = tview.NewFlex().
@@ -78,7 +73,7 @@ func setKeyboardShortcuts() *tview.Application {
 		// Handle based on current focus. Handlers may modify event
 		switch {
 		case projectPane.HasFocus():
-			event = handleProjectPaneShortcuts(event)
+			event = projectPane.handleShortcuts(event)
 		case taskPane.HasFocus():
 			event = handleTaskPaneShortcuts(event)
 		case taskDetailPane.HasFocus():
@@ -93,7 +88,8 @@ func setKeyboardShortcuts() *tview.Application {
 			app.SetFocus(taskPane)
 		case 'f':
 			// @TODO : Remove
-			statusBar.showForSeconds(reflect.TypeOf(app.GetFocus()).String(), 5)
+			//statusBar.showForSeconds(reflect.TypeOf(app.GetFocus()).String(), 5)
+			statusBar.showForSeconds(projectPane.activeProject.Title, 5)
 		}
 
 		return event

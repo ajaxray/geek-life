@@ -31,7 +31,7 @@ func prepareTaskPane() {
 					return
 				}
 
-				task, err := taskRepo.Create(*currentProject, newTask.GetText(), "", "", 0)
+				task, err := taskRepo.Create(*projectPane.activeProject, newTask.GetText(), "", "", 0)
 				if err != nil {
 					statusBar.showForSeconds("[red::]Could not create Task:"+err.Error(), 5)
 				}
