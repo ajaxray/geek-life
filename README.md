@@ -72,7 +72,7 @@ Done! *Manage your tasks your way!*
 
 ## :keyboard: Keyboard shortcuts
 
-Shortcut key for a pane/element will be marked with underline (e,g, "<u>P</u>roject" as project pane title).
+Shortcut key for a pane/element will be marked with underline.
 
 Some shortcuts are global, some are contextual. 
 Contextual shortcuts will be applied according to focused pane/element.  
