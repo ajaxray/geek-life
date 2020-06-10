@@ -8,6 +8,7 @@ import (
 	"github.com/gdamore/tcell"
 	"github.com/rivo/tview"
 
+	"github.com/ajaxray/geek-life/model"
 	"github.com/ajaxray/geek-life/util"
 )
 
@@ -63,4 +64,28 @@ func ignoreKeyEvt() bool {
 func yetToImplement(feature string) func() {
 	message := fmt.Sprintf("[yellow]%s is yet to implement. Please Check in next version.", feature)
 	return func() { statusBar.showForSeconds(message, 5) }
+}
+
+func removeThirdCol() {
+	contents.RemoveItem(taskDetailPane)
+	contents.RemoveItem(projectDetailPane)
+}
+
+func getTaskTitleColor(task model.Task) string {
+	colorName := "olive"
+	if task.Completed {
+		colorName = "lime"
+	} else if task.DueDate != 0 && task.DueDate < time.Now().Truncate(24*time.Hour).Unix() {
+		colorName = "red"
+	}
+
+	return colorName
+}
+
+func makeTaskListingTitle(task model.Task) string {
+	checkbox := "[ []"
+	if task.Completed {
+		checkbox = "[x[]"
+	}
+	return fmt.Sprintf("[%s]%s %s", getTaskTitleColor(task), checkbox, task.Title)
 }

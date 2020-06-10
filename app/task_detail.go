@@ -72,7 +72,7 @@ func makeDateRow() *tview.Flex {
 			case tcell.KeyEnter:
 				setTaskDate(parseDateInputOrCurrent(taskDate.GetText()).Unix(), true)
 			case tcell.KeyEsc:
-				setTaskDate(currentTask.DueDate, false)
+				setTaskDate(taskPane.activeTask.DueDate, false)
 			}
 			app.SetFocus(taskDetailPane)
 		})
@@ -101,7 +101,7 @@ func makeDateRow() *tview.Flex {
 }
 
 func setStatusToggle() {
-	if currentTask.Completed {
+	if taskPane.activeTask.Completed {
 		taskStatusToggle.SetLabel("Resume").SetBackgroundColor(tcell.ColorMaroon)
 	} else {
 		taskStatusToggle.SetLabel("Complete").SetBackgroundColor(tcell.ColorDarkGreen)
@@ -109,19 +109,19 @@ func setStatusToggle() {
 }
 
 func toggleActiveTaskStatus() {
-	status := !currentTask.Completed
-	if taskRepo.UpdateField(currentTask, "Completed", status) == nil {
-		currentTask.Completed = status
-		loadTask(currentTaskIdx)
-		taskList.SetItemText(currentTaskIdx, makeTaskListingTitle(*currentTask), "")
+	status := !taskPane.activeTask.Completed
+	if taskRepo.UpdateField(taskPane.activeTask, "Completed", status) == nil {
+		taskPane.activeTask.Completed = status
+		taskPane.ActivateTask(taskPane.list.GetCurrentItem())
+		taskPane.list.SetItemText(taskPane.list.GetCurrentItem(), makeTaskListingTitle(*taskPane.activeTask), "")
 	}
 }
 
 // Display Task date in detail pane, and update date if asked to
 func setTaskDate(unixDate int64, update bool) {
 	if update {
-		currentTask.DueDate = unixDate
-		if err := taskRepo.UpdateField(currentTask, "DueDate", unixDate); err != nil {
+		taskPane.activeTask.DueDate = unixDate
+		if err := taskRepo.UpdateField(taskPane.activeTask, "DueDate", unixDate); err != nil {
 			statusBar.showForSeconds("Could not update due date: "+err.Error(), 5)
 			return
 		}
@@ -160,8 +160,8 @@ func prepareDetailsEditor() {
 	taskDetailView.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		switch event.Key() {
 		case tcell.KeyEsc:
-			currentTask.Details = taskDetailView.Buf.String()
-			err := taskRepo.Update(currentTask)
+			taskPane.activeTask.Details = taskDetailView.Buf.String()
+			err := taskRepo.Update(taskPane.activeTask)
 			if err == nil {
 				statusBar.showForSeconds("[lime]Saved task detail", 5)
 			} else {

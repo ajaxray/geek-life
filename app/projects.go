@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/asdine/storm/v3"
 	"github.com/gdamore/tcell"
 	"github.com/rivo/tview"
 
@@ -119,24 +118,25 @@ func (pane *ProjectPane) handleShortcuts(event *tcell.EventKey) *tcell.EventKey 
 
 func (pane *ProjectPane) activateProject(idx int) {
 	pane.activeProject = &pane.projects[idx]
-	loadProjectTasks()
+	taskPane.LoadProjectTasks(*pane.activeProject)
 
 	removeThirdCol()
 	projectDetailPane.SetTitle("[::b]" + pane.activeProject.Title)
 	contents.AddItem(projectDetailPane, 25, 0, false)
+	app.SetFocus(taskPane)
 }
 
 func (pane *ProjectPane) removeActivateProject() {
 	if pane.activeProject != nil && pane.repo.Delete(pane.activeProject) == nil {
 
 		// @TODO - Move to tasks pane
-		for i := range tasks {
-			_ = taskRepo.Delete(&tasks[i])
+		for i := range taskPane.tasks {
+			_ = taskRepo.Delete(&taskPane.tasks[i])
 		}
+		taskPane.ClearList()
 
 		statusBar.showForSeconds("[lime]Removed Project: "+pane.activeProject.Title, 5)
 		removeThirdCol()
-		taskList.Clear()
 
 		pane.loadListItems(true)
 	}
@@ -153,17 +153,6 @@ func (pane *ProjectPane) loadListItems(focus bool) {
 	}
 }
 
-// @TODO - Should be broken down into respective pane
-func loadProjectTasks() {
-	taskList.Clear()
-	app.SetFocus(taskPane)
-	var err error
-
-	if tasks, err = taskRepo.GetAllByProject(*projectPane.activeProject); err != nil && err != storm.ErrNotFound {
-		statusBar.showForSeconds("[red::]Error: "+err.Error(), 5)
-	}
-
-	for i, task := range tasks {
-		addTaskToList(task, i)
-	}
+func (pane *ProjectPane) GetActiveProject() *model.Project {
+	return pane.activeProject
 }

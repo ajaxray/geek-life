@@ -13,8 +13,6 @@ func prepareProjectDetail() {
 
 	deleteBtn.SetBackgroundColor(tcell.ColorRed)
 	projectDetailPane = tview.NewFlex().SetDirection(tview.FlexRow).
-		// AddItem(activeProjectName, 1, 1, false).
-		// AddItem(makeHorizontalLine(tcell.RuneS3, tcell.ColorGray), 1, 1, false).
 		AddItem(deleteBtn, 3, 1, false).
 		AddItem(blankCell, 1, 1, false).
 		AddItem(clearBtn, 3, 1, false).
@@ -26,9 +24,9 @@ func prepareProjectDetail() {
 // @TODO - Move to tasks pane
 func clearCompletedTasks() {
 	count := 0
-	for i, task := range tasks {
-		if task.Completed && taskRepo.Delete(&tasks[i]) == nil {
-			taskList.RemoveItem(i)
+	for i, task := range taskPane.tasks {
+		if task.Completed && taskRepo.Delete(&taskPane.tasks[i]) == nil {
+			taskPane.list.RemoveItem(i)
 			count++
 		}
 	}
