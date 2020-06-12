@@ -1,34 +1,37 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/gdamore/tcell"
 	"github.com/rivo/tview"
+
+	"github.com/ajaxray/geek-life/model"
 )
 
-func prepareProjectDetail() {
-	deleteBtn := makeButton("Delete Project", projectPane.removeActivateProject)
-	clearBtn := makeButton("Clear Completed Tasks", clearCompletedTasks)
+type ProjectDetailPane struct {
+	*tview.Flex
+	project *model.Project
+}
+
+func NewProjectDetailPane() *ProjectDetailPane {
+	pane := ProjectDetailPane{
+		Flex: tview.NewFlex().SetDirection(tview.FlexRow),
+	}
+	deleteBtn := makeButton("Delete Project", projectPane.RemoveActivateProject)
+	clearBtn := makeButton("Clear Completed Tasks", taskPane.ClearCompletedTasks)
 
 	deleteBtn.SetBackgroundColor(tcell.ColorRed)
-	projectDetailPane = tview.NewFlex().SetDirection(tview.FlexRow).
+	pane.
 		AddItem(deleteBtn, 3, 1, false).
 		AddItem(blankCell, 1, 1, false).
 		AddItem(clearBtn, 3, 1, false).
 		AddItem(blankCell, 0, 1, false)
 
-	projectDetailPane.SetBorder(true).SetTitle("[::u]A[::-]ctions")
+	pane.SetBorder(true).SetTitle("[::u]A[::-]ctions")
+
+	return &pane
 }
 
-// @TODO - Move to tasks pane
-func clearCompletedTasks() {
-	count := 0
-	for i, task := range taskPane.tasks {
-		if task.Completed && taskRepo.Delete(&taskPane.tasks[i]) == nil {
-			taskPane.list.RemoveItem(i)
-			count++
-		}
-	}
-	statusBar.showForSeconds(fmt.Sprintf("[yellow]%d tasks cleared!", count), 5)
+func (pd *ProjectDetailPane) SetProject(project *model.Project) {
+	pd.project = project
+	pd.SetTitle("[::b]" + pd.project.Title)
 }

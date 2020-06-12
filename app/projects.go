@@ -121,15 +121,14 @@ func (pane *ProjectPane) activateProject(idx int) {
 	taskPane.LoadProjectTasks(*pane.activeProject)
 
 	removeThirdCol()
-	projectDetailPane.SetTitle("[::b]" + pane.activeProject.Title)
+	projectDetailPane.SetProject(pane.activeProject)
 	contents.AddItem(projectDetailPane, 25, 0, false)
 	app.SetFocus(taskPane)
 }
 
-func (pane *ProjectPane) removeActivateProject() {
+func (pane *ProjectPane) RemoveActivateProject() {
 	if pane.activeProject != nil && pane.repo.Delete(pane.activeProject) == nil {
 
-		// @TODO - Move to tasks pane
 		for i := range taskPane.tasks {
 			_ = taskRepo.Delete(&taskPane.tasks[i])
 		}

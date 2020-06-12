@@ -28,8 +28,6 @@ type TaskDetailPane struct {
 const dateLayoutISO = "2006-01-02"
 const dateLayoutHuman = "02 Jan, Monday"
 
-var blankCell = tview.NewTextView()
-
 func NewTaskDetailPane(taskRepo repository.TaskRepository) *TaskDetailPane {
 	pane := TaskDetailPane{
 		Flex:             tview.NewFlex().SetDirection(tview.FlexRow),

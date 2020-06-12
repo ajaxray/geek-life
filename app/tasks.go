@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/asdine/storm/v3"
 	"github.com/gdamore/tcell"
 	"github.com/rivo/tview"
@@ -112,4 +114,16 @@ func (pane *TaskPane) ActivateTask(idx int) {
 
 	contents.AddItem(taskDetailPane, 0, 3, false)
 
+}
+
+func (pane *TaskPane) ClearCompletedTasks() {
+	count := 0
+	for i, task := range pane.tasks {
+		if task.Completed && pane.taskRepo.Delete(&pane.tasks[i]) == nil {
+			pane.list.RemoveItem(i)
+			count++
+		}
+	}
+
+	statusBar.showForSeconds(fmt.Sprintf("[yellow]%d tasks cleared!", count), 5)
 }

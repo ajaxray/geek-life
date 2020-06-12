@@ -11,14 +11,14 @@ import (
 )
 
 var (
-	app               *tview.Application
-	projectDetailPane *tview.Flex
-	layout, contents  *tview.Flex
+	app              *tview.Application
+	layout, contents *tview.Flex
 
-	statusBar      *StatusBar
-	projectPane    *ProjectPane
-	taskPane       *TaskPane
-	taskDetailPane *TaskDetailPane
+	statusBar         *StatusBar
+	projectPane       *ProjectPane
+	taskPane          *TaskPane
+	taskDetailPane    *TaskDetailPane
+	projectDetailPane *ProjectDetailPane
 
 	db          *storm.DB
 	projectRepo repository.ProjectRepository
@@ -44,7 +44,7 @@ func main() {
 	statusBar = makeStatusBar(app)
 	projectPane = NewProjectPane(projectRepo)
 	taskPane = NewTaskPane(projectRepo, taskRepo)
-	prepareProjectDetail()
+	projectDetailPane = NewProjectDetailPane()
 	taskDetailPane = NewTaskDetailPane(taskRepo)
 
 	contents = tview.NewFlex().

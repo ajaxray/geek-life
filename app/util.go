@@ -12,6 +12,8 @@ import (
 	"github.com/ajaxray/geek-life/util"
 )
 
+var blankCell = tview.NewTextView()
+
 func makeHorizontalLine(lineChar rune, color tcell.Color) *tview.TextView {
 	hr := tview.NewTextView()
 	hr.SetDrawFunc(func(screen tcell.Screen, x int, y int, width int, height int) (int, int, int, int) {
