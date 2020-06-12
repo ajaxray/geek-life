@@ -8,90 +8,103 @@ import (
 	"github.com/pgavlin/femto"
 	"github.com/pgavlin/femto/runtime"
 	"github.com/rivo/tview"
+
+	"github.com/ajaxray/geek-life/model"
+	"github.com/ajaxray/geek-life/repository"
 )
 
-var (
+type TaskDetailPane struct {
+	*tview.Flex
 	taskName, taskDateDisplay *tview.TextView
 	editorHint                *tview.TextView
 	taskDate                  *tview.InputField
-	taskDetailView            *femto.View
 	taskStatusToggle          *tview.Button
-	colorscheme               femto.Colorscheme
-	blankCell                 = tview.NewTextView()
-)
+	taskDetailView            *femto.View
+	colorScheme               femto.Colorscheme
+	taskRepo                  repository.TaskRepository
+	task                      *model.Task
+}
 
 const dateLayoutISO = "2006-01-02"
 const dateLayoutHuman = "02 Jan, Monday"
 
-func prepareDetailPane() {
-	taskName = tview.NewTextView().SetDynamicColors(true)
+var blankCell = tview.NewTextView()
 
-	prepareDetailsEditor()
+func NewTaskDetailPane(taskRepo repository.TaskRepository) *TaskDetailPane {
+	pane := TaskDetailPane{
+		Flex:             tview.NewFlex().SetDirection(tview.FlexRow),
+		taskName:         tview.NewTextView().SetDynamicColors(true),
+		taskDateDisplay:  tview.NewTextView().SetDynamicColors(true),
+		taskStatusToggle: makeButton("Complete", nil).SetLabelColor(tcell.ColorLightGray),
+		taskRepo:         taskRepo,
+	}
 
-	taskStatusToggle = makeButton("Complete", toggleActiveTaskStatus).SetLabelColor(tcell.ColorLightGray)
+	pane.prepareDetailsEditor()
 
 	toggleHint := tview.NewTextView().SetTextColor(tcell.ColorDimGray).SetText("<space> to toggle")
+	pane.taskStatusToggle.SetSelectedFunc(pane.toggleTaskStatus)
 
+	pane.editorHint = tview.NewTextView().SetText(" e to edit, ↓↑ to scroll").SetTextColor(tcell.ColorDimGray)
+
+	// Prepare static (no external interaction) elements
 	editorLabel := tview.NewFlex().
 		AddItem(tview.NewTextView().SetText("Task Not[::u]e[::-]:").SetDynamicColors(true), 0, 1, false).
-		AddItem(makeButton("edit", func() { activateEditor() }), 6, 0, false)
-
-	editorHint = tview.NewTextView().
-		SetText(" e to edit, ↓↑ to scroll").
-		SetTextColor(tcell.ColorDimGray)
+		AddItem(makeButton("edit", func() { pane.activateEditor() }), 6, 0, false)
 	editorHelp := tview.NewFlex().
-		AddItem(editorHint, 0, 1, false).
+		AddItem(pane.editorHint, 0, 1, false).
 		AddItem(tview.NewTextView().SetTextAlign(tview.AlignRight).
 			SetText("syntax:markdown theme:monakai").
 			SetTextColor(tcell.ColorDimGray), 0, 1, false)
 
-	taskDetailPane = tview.NewFlex().SetDirection(tview.FlexRow).
-		AddItem(taskName, 2, 1, true).
+	pane.
+		AddItem(pane.taskName, 2, 1, true).
 		AddItem(makeHorizontalLine(tcell.RuneS3, tcell.ColorGray), 1, 1, false).
 		AddItem(blankCell, 1, 1, false).
-		AddItem(makeDateRow(), 1, 1, true).
+		AddItem(pane.makeDateRow(), 1, 1, true).
 		AddItem(blankCell, 1, 1, false).
 		AddItem(editorLabel, 1, 1, false).
-		AddItem(taskDetailView, 15, 4, false).
+		AddItem(pane.taskDetailView, 15, 4, false).
 		AddItem(editorHelp, 1, 1, false).
 		AddItem(blankCell, 0, 1, false).
 		AddItem(toggleHint, 1, 1, false).
-		AddItem(taskStatusToggle, 3, 1, false)
+		AddItem(pane.taskStatusToggle, 3, 1, false)
 
-	taskDetailPane.SetBorder(true).SetTitle("Task Detail")
+	pane.SetBorder(true).SetTitle("Task Detail")
+
+	return &pane
 }
 
-func makeDateRow() *tview.Flex {
-	taskDateDisplay = tview.NewTextView().SetDynamicColors(true)
-	taskDate = makeLightTextInput("yyyy-mm-dd").
+func (td *TaskDetailPane) makeDateRow() *tview.Flex {
+
+	td.taskDate = makeLightTextInput("yyyy-mm-dd").
 		SetLabel("Set:").
 		SetLabelColor(tcell.ColorGray).
 		SetFieldWidth(12).
 		SetDoneFunc(func(key tcell.Key) {
 			switch key {
 			case tcell.KeyEnter:
-				setTaskDate(parseDateInputOrCurrent(taskDate.GetText()).Unix(), true)
+				td.setTaskDate(parseDateInputOrCurrent(td.taskDate.GetText()).Unix(), true)
 			case tcell.KeyEsc:
-				setTaskDate(taskPane.activeTask.DueDate, false)
+				td.setTaskDate(td.task.DueDate, false)
 			}
-			app.SetFocus(taskDetailPane)
+			app.SetFocus(td)
 		})
 
 	todaySelector := func() {
-		setTaskDate(time.Now().Unix(), true)
+		td.setTaskDate(time.Now().Unix(), true)
 	}
 
 	nextDaySelector := func() {
-		setTaskDate(parseDateInputOrCurrent(taskDate.GetText()).AddDate(0, 0, 1).Unix(), true)
+		td.setTaskDate(parseDateInputOrCurrent(td.taskDate.GetText()).AddDate(0, 0, 1).Unix(), true)
 	}
 
 	prevDaySelector := func() {
-		setTaskDate(parseDateInputOrCurrent(taskDate.GetText()).AddDate(0, 0, -1).Unix(), true)
+		td.setTaskDate(parseDateInputOrCurrent(td.taskDate.GetText()).AddDate(0, 0, -1).Unix(), true)
 	}
 
 	return tview.NewFlex().
-		AddItem(taskDateDisplay, 0, 2, true).
-		AddItem(taskDate, 14, 0, true).
+		AddItem(td.taskDateDisplay, 0, 2, true).
+		AddItem(td.taskDate, 14, 0, true).
 		AddItem(blankCell, 1, 0, false).
 		AddItem(makeButton("today", todaySelector), 8, 1, false).
 		AddItem(blankCell, 1, 0, false).
@@ -100,28 +113,28 @@ func makeDateRow() *tview.Flex {
 		AddItem(makeButton("-1", prevDaySelector), 4, 1, false)
 }
 
-func setStatusToggle() {
-	if taskPane.activeTask.Completed {
-		taskStatusToggle.SetLabel("Resume").SetBackgroundColor(tcell.ColorMaroon)
+func (td *TaskDetailPane) updateToggleDisplay() {
+	if td.task.Completed {
+		td.taskStatusToggle.SetLabel("Resume").SetBackgroundColor(tcell.ColorMaroon)
 	} else {
-		taskStatusToggle.SetLabel("Complete").SetBackgroundColor(tcell.ColorDarkGreen)
+		td.taskStatusToggle.SetLabel("Complete").SetBackgroundColor(tcell.ColorDarkGreen)
 	}
 }
 
-func toggleActiveTaskStatus() {
-	status := !taskPane.activeTask.Completed
-	if taskRepo.UpdateField(taskPane.activeTask, "Completed", status) == nil {
-		taskPane.activeTask.Completed = status
-		taskPane.ActivateTask(taskPane.list.GetCurrentItem())
-		taskPane.list.SetItemText(taskPane.list.GetCurrentItem(), makeTaskListingTitle(*taskPane.activeTask), "")
+func (td *TaskDetailPane) toggleTaskStatus() {
+	status := !td.task.Completed
+	if taskRepo.UpdateField(td.task, "Completed", status) == nil {
+		td.task.Completed = status
+		td.SetTask(td.task)
+		taskPane.list.SetItemText(taskPane.list.GetCurrentItem(), makeTaskListingTitle(*td.task), "")
 	}
 }
 
 // Display Task date in detail pane, and update date if asked to
-func setTaskDate(unixDate int64, update bool) {
+func (td *TaskDetailPane) setTaskDate(unixDate int64, update bool) {
 	if update {
-		taskPane.activeTask.DueDate = unixDate
-		if err := taskRepo.UpdateField(taskPane.activeTask, "DueDate", unixDate); err != nil {
+		td.task.DueDate = unixDate
+		if err := td.taskRepo.UpdateField(td.task, "DueDate", unixDate); err != nil {
 			statusBar.showForSeconds("Could not update due date: "+err.Error(), 5)
 			return
 		}
@@ -135,40 +148,42 @@ func setTaskDate(unixDate int64, update bool) {
 		if due.Before(time.Now()) {
 			color = "red"
 		}
-		taskDateDisplay.SetText(fmt.Sprintf("[::u]D[::-]ue: [%s]%s", color, humanDate))
-		taskDate.SetText(due.Format(dateLayoutISO))
+		td.taskDateDisplay.SetText(fmt.Sprintf("[::u]D[::-]ue: [%s]%s", color, humanDate))
+		td.taskDate.SetText(due.Format(dateLayoutISO))
 	} else {
-		taskDate.SetText("")
-		taskDateDisplay.SetText("[::u]D[::-]ue: [::d]Not Set")
+		td.taskDate.SetText("")
+		td.taskDateDisplay.SetText("[::u]D[::-]ue: [::d]Not Set")
 	}
 }
 
-func prepareDetailsEditor() {
-	taskDetailView = femto.NewView(makeBufferFromString(""))
-	taskDetailView.SetRuntimeFiles(runtime.Files)
+func (td *TaskDetailPane) prepareDetailsEditor() {
 
-	// var colorscheme femto.Colorscheme
+	td.taskDetailView = femto.NewView(makeBufferFromString(""))
+	td.taskDetailView.SetRuntimeFiles(runtime.Files)
+
+	// var colorScheme femto.Colorscheme
 	if monokai := runtime.Files.FindFile(femto.RTColorscheme, "monokai"); monokai != nil {
 		if data, err := monokai.Data(); err == nil {
-			colorscheme = femto.ParseColorscheme(string(data))
+			td.colorScheme = femto.ParseColorscheme(string(data))
 		}
 	}
-	taskDetailView.SetColorscheme(colorscheme)
-	taskDetailView.SetBorder(true)
-	taskDetailView.SetBorderColor(tcell.ColorLightSlateGray)
 
-	taskDetailView.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+	td.taskDetailView.SetColorscheme(td.colorScheme)
+	td.taskDetailView.SetBorder(true)
+	td.taskDetailView.SetBorderColor(tcell.ColorLightSlateGray)
+
+	td.taskDetailView.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		switch event.Key() {
 		case tcell.KeyEsc:
-			taskPane.activeTask.Details = taskDetailView.Buf.String()
-			err := taskRepo.Update(taskPane.activeTask)
+			td.task.Details = td.taskDetailView.Buf.String()
+			err := taskRepo.Update(td.task)
 			if err == nil {
 				statusBar.showForSeconds("[lime]Saved task detail", 5)
 			} else {
 				statusBar.showForSeconds("[red]Could not save: "+err.Error(), 5)
 			}
 
-			deactivateEditor()
+			td.deactivateEditor()
 			return nil
 		}
 
@@ -188,38 +203,50 @@ func makeBufferFromString(content string) *femto.Buffer {
 	return buff
 }
 
-func activateEditor() {
-	taskDetailView.Readonly = false
-	taskDetailView.SetBorderColor(tcell.ColorDarkOrange)
-	editorHint.SetText(" Esc to save changes")
-	app.SetFocus(taskDetailView)
+func (td *TaskDetailPane) activateEditor() {
+	td.taskDetailView.Readonly = false
+	td.taskDetailView.SetBorderColor(tcell.ColorDarkOrange)
+	td.editorHint.SetText(" Esc to save changes")
+	app.SetFocus(td.taskDetailView)
 }
 
-func deactivateEditor() {
-	taskDetailView.Readonly = true
-	taskDetailView.SetBorderColor(tcell.ColorLightSlateGray)
-	editorHint.SetText(" e to edit, ↓↑ to scroll")
-	app.SetFocus(taskDetailPane)
+func (td *TaskDetailPane) deactivateEditor() {
+	td.taskDetailView.Readonly = true
+	td.taskDetailView.SetBorderColor(tcell.ColorLightSlateGray)
+	td.editorHint.SetText(" e to edit, ↓↑ to scroll")
+	app.SetFocus(td)
 }
 
-func handleDetailPaneShortcuts(event *tcell.EventKey) *tcell.EventKey {
+func (td *TaskDetailPane) handleShortcuts(event *tcell.EventKey) *tcell.EventKey {
 	switch event.Key() {
 	case tcell.KeyEsc:
 		app.SetFocus(taskPane)
 	case tcell.KeyDown:
-		taskDetailView.ScrollDown(1)
+		td.taskDetailView.ScrollDown(1)
 	case tcell.KeyUp:
-		taskDetailView.ScrollUp(1)
+		td.taskDetailView.ScrollUp(1)
 	case tcell.KeyRune:
 		switch event.Rune() {
 		case 'e':
-			activateEditor()
+			td.activateEditor()
 		case 'd':
-			app.SetFocus(taskDate)
+			app.SetFocus(td.taskDate)
 		case ' ':
-			toggleActiveTaskStatus()
+			td.toggleTaskStatus()
 		}
 	}
 
 	return event
+}
+
+func (td *TaskDetailPane) SetTask(task *model.Task) {
+	td.task = task
+
+	td.taskName.SetText(fmt.Sprintf("[%s::b]# %s", getTaskTitleColor(*td.task), td.task.Title))
+	td.taskDetailView.Buf = makeBufferFromString(td.task.Details)
+	td.taskDetailView.SetColorscheme(td.colorScheme)
+	td.taskDetailView.Start()
+	td.setTaskDate(td.task.DueDate, false)
+	td.updateToggleDisplay()
+	td.deactivateEditor()
 }

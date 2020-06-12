@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/asdine/storm/v3"
 	"github.com/gdamore/tcell"
 	"github.com/rivo/tview"
@@ -110,14 +108,8 @@ func (pane *TaskPane) LoadProjectTasks(project model.Project) {
 func (pane *TaskPane) ActivateTask(idx int) {
 	removeThirdCol()
 	pane.activeTask = &pane.tasks[idx]
-
-	taskName.SetText(fmt.Sprintf("[%s::b]# %s", getTaskTitleColor(*pane.activeTask), pane.activeTask.Title))
-	taskDetailView.Buf = makeBufferFromString(pane.activeTask.Details)
-	taskDetailView.SetColorscheme(colorscheme)
-	taskDetailView.Start()
-	setTaskDate(pane.activeTask.DueDate, false)
-	setStatusToggle()
+	taskDetailPane.SetTask(pane.activeTask)
 
 	contents.AddItem(taskDetailPane, 0, 3, false)
-	deactivateEditor()
+
 }

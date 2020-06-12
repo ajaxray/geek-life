@@ -13,12 +13,12 @@ import (
 var (
 	app               *tview.Application
 	projectDetailPane *tview.Flex
-	taskDetailPane    *tview.Flex
 	layout, contents  *tview.Flex
 
-	statusBar   *StatusBar
-	projectPane *ProjectPane
-	taskPane    *TaskPane
+	statusBar      *StatusBar
+	projectPane    *ProjectPane
+	taskPane       *TaskPane
+	taskDetailPane *TaskDetailPane
 
 	db          *storm.DB
 	projectRepo repository.ProjectRepository
@@ -43,10 +43,9 @@ func main() {
 
 	statusBar = makeStatusBar(app)
 	projectPane = NewProjectPane(projectRepo)
-	// prepareTaskPane()
 	taskPane = NewTaskPane(projectRepo, taskRepo)
 	prepareProjectDetail()
-	prepareDetailPane()
+	taskDetailPane = NewTaskDetailPane(taskRepo)
 
 	contents = tview.NewFlex().
 		AddItem(projectPane, 25, 1, true).
@@ -77,7 +76,7 @@ func setKeyboardShortcuts() *tview.Application {
 		case taskPane.HasFocus():
 			event = taskPane.handleShortcuts(event)
 		case taskDetailPane.HasFocus():
-			event = handleDetailPaneShortcuts(event)
+			event = taskDetailPane.handleShortcuts(event)
 		}
 
 		// Global shortcuts
