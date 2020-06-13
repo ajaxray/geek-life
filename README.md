@@ -1,20 +1,20 @@
-The CLI To-Do List / Task Manager for Geeks :technologist:
-=========
+<h1>  
+<img src="media/geek-life-logo.png" style="vertical-align: center; height: 150px; width: 150px; float:left" alt="Geek-life Logo">
+The CLI To-Do List / Task Manager for Geeks 
+</h1>
 
+<a href="https://www.producthunt.com/posts/geek-life?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-geek-life" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=205655&theme=light" alt="Geek-life - The To-do List / Task Manager for Geeks in command line! | Product Hunt Embed" style="width: 125px; height: 27px;" width="125px" height="27px" /></a>
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Go Report Card](https://goreportcard.com/badge/github.com/ajaxray/geek-life?version=latest)](https://goreportcard.com/report/github.com/ajaxray/geek-life)
 
-
-:superhero: Developer / DevOps / Sysadmin? A command line hero?     
+:technologist: Developer / DevOps / Sysadmin? A command line hero?     
 :computer: Live with the dark terminal?  
 :memo: Think in Markdown?  
 
 **Finally!** A full featured task manager for YOU! 
 
-<a href="https://raw.githubusercontent.com/ajaxray/geek-life/master/screens/geek-life_v1.gif" target="_blank">
-
-![Geek-life overview](screens/geek-life_v1_static.png "Geek-life overview")
-Click to see it moving (GIF)
+![Geek-life overview](media/geek-life_v1_static.png "Geek-life overview")
+<a href="https://raw.githubusercontent.com/ajaxray/geek-life/master/screens/geek-life_v1.gif" target="_blank">Click to see it moving (GIF)
 </a>
  
 
@@ -33,7 +33,7 @@ Click to see it moving (GIF)
 - [x] Delete Project
 - [ ] Edit Project
 - [x] Create Task (under project)
-- [x] Set Task due date (as `dd-mm-yyyy`) with shortcut
+- [x] Set Task due date (as `yyyy-mm-dd`) with shortcut
 - [x] Set Task due date with quick input buttons (today, +1 day, -1 day)
 - [x] Tasklist items should indicate status (done, pending, overdue) using colors 
 - [x] Shortcut for Adding new Project and Task
