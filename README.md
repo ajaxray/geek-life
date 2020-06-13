@@ -1,7 +1,7 @@
-<h1>  
-<img src="media/geek-life-logo.png" style="vertical-align: center; height: 150px; width: 150px; float:left" alt="Geek-life Logo">
-The CLI To-Do List / Task Manager for Geeks 
-</h1>
+<p align="center">
+    <img src="media/geek-life-logo.png" align="center" alt="Geek-life Logo">
+</p>
+<h1 align="center"> The CLI To-Do List / Task Manager for Geeks </h1>
 
 <a href="https://www.producthunt.com/posts/geek-life?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-geek-life" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=205655&theme=light" alt="Geek-life - The To-do List / Task Manager for Geeks in command line! | Product Hunt Embed" style="width: 125px; height: 27px;" width="125px" height="27px" /></a>
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
