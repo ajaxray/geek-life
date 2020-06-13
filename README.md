@@ -14,9 +14,8 @@
 **Finally!** A full featured task manager for YOU! 
 
 ![Geek-life overview](media/geek-life_v1_static.png "Geek-life overview")
-<a href="media/geek-life_v1.gif" target="_blank">Click to see it moving (GIF)</a>
+<a href="https://raw.githubusercontent.com/ajaxray/geek-life/master/media/geek-life_v1.gif" target="_blank">Click to see it moving (GIF)</a>
  
-
 
 ### :crystal_ball: Highlights
 
