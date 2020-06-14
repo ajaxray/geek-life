@@ -45,7 +45,7 @@
     - Today - Due Today and overdue 
     - Upcoming - Due in one week
     - Someday - No due date
-- [ ] [Havitica](https://habitica.com/)<sup>3</sup> integration - Use it as Habitica client or use Habitica for cloud backup
+- [ ] [Habitica](https://habitica.com/)<sup>3</sup> integration - Use it as Habitica client or use Habitica for cloud backup
 - [ ] Time tracking
 
 ### :rocket: Ready for action (installing and running)
