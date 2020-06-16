@@ -38,6 +38,7 @@ func ConnectStorm() *storm.DB {
 	return db
 }
 
+// CreateDirIfNotExist creates a directory if not found
 func CreateDirIfNotExist(dir string) {
 	if _, err := os.Stat(dir); os.IsNotExist(err) {
 		err = os.MkdirAll(dir, 0755)

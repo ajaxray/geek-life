@@ -13,17 +13,16 @@ import (
 
 // GetEnvInt finds an ENV variable and converts to int, otherwise return default value
 func GetEnvInt(key string, defaultVal int) int {
+	var err error
+	intVal := defaultVal
+
 	if v, ok := os.LookupEnv(key); ok {
-		if i, err := strconv.Atoi(v); err == nil {
-			return i
-		} else {
+		if intVal, err = strconv.Atoi(v); err != nil {
 			log.Fatal(err)
 		}
-
-		return 0
 	}
 
-	return defaultVal
+	return intVal
 }
 
 // GetEnvStr finds an ENV variable, otherwise return default value
