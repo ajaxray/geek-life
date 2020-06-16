@@ -7,11 +7,13 @@ import (
 	"github.com/ajaxray/geek-life/model"
 )
 
+// ProjectDetailPane Displays relevant actions of current project
 type ProjectDetailPane struct {
 	*tview.Flex
 	project *model.Project
 }
 
+// NewProjectDetailPane Initializes ProjectDetailPane
 func NewProjectDetailPane() *ProjectDetailPane {
 	pane := ProjectDetailPane{
 		Flex: tview.NewFlex().SetDirection(tview.FlexRow),
@@ -31,6 +33,7 @@ func NewProjectDetailPane() *ProjectDetailPane {
 	return &pane
 }
 
+// SetProject Sets the active Project
 func (pd *ProjectDetailPane) SetProject(project *model.Project) {
 	pd.project = project
 	pd.SetTitle("[::b]" + pd.project.Title)

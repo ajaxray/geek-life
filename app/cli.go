@@ -29,7 +29,11 @@ func main() {
 	app = tview.NewApplication()
 
 	db = util.ConnectStorm()
-	defer db.Close()
+	defer func() {
+		if err := db.Close(); err != nil {
+			util.LogIfError(err, "Error in closing storm Db")
+		}
+	}()
 
 	projectRepo = repo.NewProjectRepository(db)
 	taskRepo = repo.NewTaskRepository(db)
@@ -88,7 +92,7 @@ func setKeyboardShortcuts() *tview.Application {
 		case 'f':
 			// @TODO : Remove
 			// statusBar.showForSeconds(reflect.TypeOf(app.GetFocus()).String(), 5)
-			statusBar.showForSeconds(projectPane.activeProject.Title, 5)
+			statusBar.showForSeconds(projectPane.GetActiveProject().Title, 5)
 		}
 
 		return event

@@ -11,6 +11,7 @@ import (
 	"github.com/ajaxray/geek-life/repository"
 )
 
+// TaskPane displays tasks of current TaskList or Project
 type TaskPane struct {
 	*tview.Flex
 	list       *tview.List
@@ -23,6 +24,7 @@ type TaskPane struct {
 	hint        *tview.TextView
 }
 
+// NewTaskPane initializes and configures a TaskPane
 func NewTaskPane(projectRepo repository.ProjectRepository, taskRepo repository.TaskRepository) *TaskPane {
 	pane := TaskPane{
 		Flex:        tview.NewFlex().SetDirection(tview.FlexRow),
@@ -46,7 +48,7 @@ func NewTaskPane(projectRepo repository.ProjectRepository, taskRepo repository.T
 				return
 			}
 
-			task, err := taskRepo.Create(*projectPane.activeProject, name, "", "", 0)
+			task, err := taskRepo.Create(*projectPane.GetActiveProject(), name, "", "", 0)
 			if err != nil {
 				statusBar.showForSeconds("[red::]Could not create Task:"+err.Error(), 5)
 				return
@@ -72,6 +74,7 @@ func NewTaskPane(projectRepo repository.ProjectRepository, taskRepo repository.T
 	return &pane
 }
 
+// ClearList removes all items from TaskPane
 func (pane *TaskPane) ClearList() {
 	pane.list.Clear()
 	pane.tasks = nil
@@ -79,6 +82,7 @@ func (pane *TaskPane) ClearList() {
 	pane.RemoveItem(pane.newTask)
 }
 
+// SetList Sets a list of tasks to be displayed
 func (pane *TaskPane) SetList(tasks []model.Task) {
 	pane.ClearList()
 	pane.tasks = tasks
@@ -103,6 +107,7 @@ func (pane *TaskPane) handleShortcuts(event *tcell.EventKey) *tcell.EventKey {
 	return event
 }
 
+// LoadProjectTasks loads tasks of a project in taskPane
 func (pane *TaskPane) LoadProjectTasks(project model.Project) {
 	var tasks []model.Task
 	var err error
@@ -117,6 +122,7 @@ func (pane *TaskPane) LoadProjectTasks(project model.Project) {
 	pane.AddItem(pane.newTask, 1, 0, false)
 }
 
+// ActivateTask marks a task as currently active and loads in TaskDetailPane
 func (pane *TaskPane) ActivateTask(idx int) {
 	removeThirdCol()
 	pane.activeTask = &pane.tasks[idx]
@@ -126,6 +132,7 @@ func (pane *TaskPane) ActivateTask(idx int) {
 
 }
 
+// ClearCompletedTasks removes tasks from current list that are in completed state
 func (pane *TaskPane) ClearCompletedTasks() {
 	count := 0
 	for i, task := range pane.tasks {

@@ -13,6 +13,10 @@ import (
 	"github.com/ajaxray/geek-life/repository"
 )
 
+const dateLayoutISO = "2006-01-02"
+const dateLayoutHuman = "02 Jan, Monday"
+
+// TaskDetailPane displays detailed info of a Task
 type TaskDetailPane struct {
 	*tview.Flex
 	taskName, taskDateDisplay *tview.TextView
@@ -25,9 +29,7 @@ type TaskDetailPane struct {
 	task                      *model.Task
 }
 
-const dateLayoutISO = "2006-01-02"
-const dateLayoutHuman = "02 Jan, Monday"
-
+// NewTaskDetailPane initializes and configures a TaskDetailPane
 func NewTaskDetailPane(taskRepo repository.TaskRepository) *TaskDetailPane {
 	pane := TaskDetailPane{
 		Flex:             tview.NewFlex().SetDirection(tview.FlexRow),
@@ -237,6 +239,7 @@ func (td *TaskDetailPane) handleShortcuts(event *tcell.EventKey) *tcell.EventKey
 	return event
 }
 
+// SetTask sets a Task to be displayed
 func (td *TaskDetailPane) SetTask(task *model.Task) {
 	td.task = task
 

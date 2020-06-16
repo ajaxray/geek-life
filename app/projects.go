@@ -11,6 +11,7 @@ import (
 	"github.com/ajaxray/geek-life/repository"
 )
 
+// ProjectPane Displays projects and dynamic lists
 type ProjectPane struct {
 	*tview.Flex
 	projects            []model.Project
@@ -21,6 +22,7 @@ type ProjectPane struct {
 	projectListStarting int // The index in list where project names starts
 }
 
+// NewProjectPane initializes
 func NewProjectPane(repo repository.ProjectRepository) *ProjectPane {
 	pane := ProjectPane{
 		Flex:       tview.NewFlex().SetDirection(tview.FlexRow),
@@ -126,6 +128,7 @@ func (pane *ProjectPane) activateProject(idx int) {
 	app.SetFocus(taskPane)
 }
 
+// RemoveActivateProject deletes the currently active project
 func (pane *ProjectPane) RemoveActivateProject() {
 	if pane.activeProject != nil && pane.repo.Delete(pane.activeProject) == nil {
 
@@ -152,6 +155,7 @@ func (pane *ProjectPane) loadListItems(focus bool) {
 	}
 }
 
+// GetActiveProject provides pointer to currently active project
 func (pane *ProjectPane) GetActiveProject() *model.Project {
 	return pane.activeProject
 }

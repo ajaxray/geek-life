@@ -6,6 +6,7 @@ import (
 	"github.com/rivo/tview"
 )
 
+// StatusBar displays hints and messages at the bottom of app
 type StatusBar struct {
 	*tview.Pages
 	message   *tview.TextView
