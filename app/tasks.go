@@ -20,6 +20,7 @@ type TaskPane struct {
 	newTask     *tview.InputField
 	projectRepo repository.ProjectRepository
 	taskRepo    repository.TaskRepository
+	hint        *tview.TextView
 }
 
 func NewTaskPane(projectRepo repository.ProjectRepository, taskRepo repository.TaskRepository) *TaskPane {
@@ -29,6 +30,7 @@ func NewTaskPane(projectRepo repository.ProjectRepository, taskRepo repository.T
 		newTask:     makeLightTextInput("+[New Task]"),
 		projectRepo: projectRepo,
 		taskRepo:    taskRepo,
+		hint:        tview.NewTextView().SetTextColor(tcell.ColorYellow).SetTextAlign(tview.AlignCenter),
 	}
 
 	pane.list.SetDoneFunc(func() {
@@ -47,11 +49,13 @@ func NewTaskPane(projectRepo repository.ProjectRepository, taskRepo repository.T
 			task, err := taskRepo.Create(*projectPane.activeProject, name, "", "", 0)
 			if err != nil {
 				statusBar.showForSeconds("[red::]Could not create Task:"+err.Error(), 5)
+				return
 			}
 
 			pane.tasks = append(pane.tasks, task)
 			pane.addTaskToList(len(pane.tasks) - 1)
 			pane.newTask.SetText("")
+			statusBar.showForSeconds("[yellow::]Task created. Add another task or press Esc.", 5)
 		case tcell.KeyEsc:
 			app.SetFocus(pane)
 		}
@@ -60,9 +64,10 @@ func NewTaskPane(projectRepo repository.ProjectRepository, taskRepo repository.T
 
 	pane.
 		AddItem(pane.list, 0, 1, true).
-		AddItem(pane.newTask, 1, 0, false)
+		AddItem(pane.hint, 0, 1, false)
 
 	pane.SetBorder(true).SetTitle("[::u]T[::-]asks")
+	pane.setHintMessage()
 
 	return &pane
 }
@@ -70,6 +75,8 @@ func NewTaskPane(projectRepo repository.ProjectRepository, taskRepo repository.T
 func (pane *TaskPane) ClearList() {
 	pane.list.Clear()
 	pane.tasks = nil
+
+	pane.RemoveItem(pane.newTask)
 }
 
 func (pane *TaskPane) SetList(tasks []model.Task) {
@@ -105,6 +112,9 @@ func (pane *TaskPane) LoadProjectTasks(project model.Project) {
 	} else {
 		pane.SetList(tasks)
 	}
+
+	pane.RemoveItem(pane.hint)
+	pane.AddItem(pane.newTask, 1, 0, false)
 }
 
 func (pane *TaskPane) ActivateTask(idx int) {
@@ -126,4 +136,12 @@ func (pane *TaskPane) ClearCompletedTasks() {
 	}
 
 	statusBar.showForSeconds(fmt.Sprintf("[yellow]%d tasks cleared!", count), 5)
+}
+
+func (pane TaskPane) setHintMessage() {
+	if len(projectPane.projects) == 0 {
+		pane.hint.SetText("Welcome to the organized life!\n------------------------------\n Create TaskList/Project at the bottom of Projects pane.\n (Press p,n)")
+	} else {
+		pane.hint.SetText("Select a TaskList/Project to load tasks.\nPress p,n to create new Project.")
+	}
 }

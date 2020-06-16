@@ -58,7 +58,7 @@ func (pane *ProjectPane) addNewProject() {
 	if err != nil {
 		statusBar.showForSeconds("[red::]Failed to create Project:"+err.Error(), 5)
 	} else {
-		statusBar.showForSeconds(fmt.Sprintf("[yellow::]Project %s created. Press n to start adding new tasks.", name), 5)
+		statusBar.showForSeconds(fmt.Sprintf("[yellow::]Project %s created. Press n to start adding new tasks.", name), 10)
 		pane.projects = append(pane.projects, project)
 		pane.addProjectToList(len(pane.projects)-1, true)
 		pane.newProject.SetText("")
