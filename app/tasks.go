@@ -147,8 +147,10 @@ func (pane *TaskPane) ClearCompletedTasks() {
 
 func (pane TaskPane) setHintMessage() {
 	if len(projectPane.projects) == 0 {
-		pane.hint.SetText("Welcome to the organized life!\n------------------------------\n Create TaskList/Project at the bottom of Projects pane.\n (Press p,n)")
+		pane.hint.SetText("Welcome to the organized life!\n------------------------------\n Create TaskList/Project at the bottom of Projects pane.\n (Press p,n) \n\nHelp - https://bit.ly/cli-task")
 	} else {
-		pane.hint.SetText("Select a TaskList/Project to load tasks.\nPress p,n to create new Project.")
+		pane.hint.SetText("Select a TaskList/Project to load tasks.\nPress p,n to create new Project.\n\nHelp - https://bit.ly/cli-task")
 	}
+
+	// Add: For help - https://bit.ly/cli-task
 }

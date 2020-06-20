@@ -2,6 +2,9 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
+	"os"
+	"os/exec"
 	"time"
 
 	"github.com/gdamore/tcell"
@@ -11,6 +14,7 @@ import (
 
 	"github.com/ajaxray/geek-life/model"
 	"github.com/ajaxray/geek-life/repository"
+	"github.com/ajaxray/geek-life/util"
 )
 
 const dateLayoutISO = "2006-01-02"
@@ -175,20 +179,23 @@ func (td *TaskDetailPane) prepareDetailsEditor() {
 	td.taskDetailView.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		switch event.Key() {
 		case tcell.KeyEsc:
-			td.task.Details = td.taskDetailView.Buf.String()
-			err := taskRepo.Update(td.task)
-			if err == nil {
-				statusBar.showForSeconds("[lime]Saved task detail", 5)
-			} else {
-				statusBar.showForSeconds("[red]Could not save: "+err.Error(), 5)
-			}
-
+			td.updateTaskNote(td.taskDetailView.Buf.String())
 			td.deactivateEditor()
 			return nil
 		}
 
 		return event
 	})
+}
+
+func (td *TaskDetailPane) updateTaskNote(note string) {
+	td.task.Details = note
+	err := taskRepo.Update(td.task)
+	if err == nil {
+		statusBar.showForSeconds("[lime]Saved task detail", 5)
+	} else {
+		statusBar.showForSeconds("[red]Could not save: "+err.Error(), 5)
+	}
 }
 
 func makeBufferFromString(content string) *femto.Buffer {
@@ -217,6 +224,64 @@ func (td *TaskDetailPane) deactivateEditor() {
 	app.SetFocus(td)
 }
 
+func (td *TaskDetailPane) editInExternalEditor() {
+
+	tmpFileName, err := writeToTmpFile(td.task.Details)
+	if err != nil {
+		statusBar.showForSeconds("[red::]Failed to create tmp file. Try in-app editing by pressing i", 5)
+		return
+	}
+
+	var messageToShow, updatedContent string
+	app.Suspend(func() {
+		cmd := exec.Command(util.GetEnvStr("EDITOR", "vim"), tmpFileName)
+		cmd.Stdin = os.Stdin
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+		if err := cmd.Run(); err != nil {
+			messageToShow = "[red::]Failed to save content. Try in-app editing by pressing i"
+			return
+		}
+
+		if content, readErr := ioutil.ReadFile(tmpFileName); readErr == nil {
+			updatedContent = string(content)
+		} else {
+			messageToShow = "[red::]Failed to load external editing. Try in-app editing by pressing i"
+		}
+	})
+
+	if messageToShow != "" {
+		statusBar.showForSeconds(messageToShow, 10)
+	}
+
+	if updatedContent != "" {
+		td.updateTaskNote(updatedContent)
+		td.SetTask(td.task)
+	}
+
+	app.ForceDraw()
+	// @TODO: Not working - fix it
+	app.EnableMouse(true)
+	_ = os.Remove(tmpFileName)
+
+	// app.SetFocus(td)
+}
+
+// writeToTmpFile writes given content to a tmpFile and returns the filename
+func writeToTmpFile(content string) (string, error) {
+	tmpFile, err := ioutil.TempFile("", "geek_life_task_note_*.md")
+	if err != nil {
+		return "", err
+	}
+	fileName := tmpFile.Name()
+
+	if err = ioutil.WriteFile(fileName, []byte(content), 0777); err != nil {
+		return "", err
+	}
+
+	return fileName, tmpFile.Close()
+}
+
 func (td *TaskDetailPane) handleShortcuts(event *tcell.EventKey) *tcell.EventKey {
 	switch event.Key() {
 	case tcell.KeyEsc:
@@ -229,6 +294,8 @@ func (td *TaskDetailPane) handleShortcuts(event *tcell.EventKey) *tcell.EventKey
 		switch event.Rune() {
 		case 'e':
 			td.activateEditor()
+		case 'v':
+			td.editInExternalEditor()
 		case 'd':
 			app.SetFocus(td.taskDate)
 		case ' ':
