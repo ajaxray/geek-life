@@ -259,9 +259,9 @@ func (td *TaskDetailPane) editInExternalEditor() {
 		td.SetTask(td.task)
 	}
 
-	app.ForceDraw()
-	// @TODO: Not working - fix it
-	app.EnableMouse(true)
+	// @TODO: Mouse events not being captured after returning from Suspend - fix it
+	// app.EnableMouse(true).
+
 	_ = os.Remove(tmpFileName)
 
 	// app.SetFocus(td)
@@ -298,6 +298,8 @@ func (td *TaskDetailPane) handleShortcuts(event *tcell.EventKey) *tcell.EventKey
 			td.editInExternalEditor()
 		case 'd':
 			app.SetFocus(td.taskDate)
+		case 'h':
+			app.SetFocus(taskPane)
 		case ' ':
 			td.toggleTaskStatus()
 		}

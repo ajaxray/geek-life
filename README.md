@@ -84,9 +84,13 @@ In case writing in a text input (e,g, new project/task, due date), you have to `
 | Global | `p` | Go to Project list |
 | Global | `t` | Go to Task list |
 | Projects | `n` | New Project |
+| Projects | `↑`/`k`/`Shift+Tab` | Go up in project list |
+| Projects | `↓`/`j`/`Tab` | Go down in project list |
 | Tasks | `n` | New Task |
-| Tasks | `Esc` | Go back to Projects Pane |
-| Task Detail | `Esc` | Go back to Tasks Pane |
+| Tasks | `Esc`/`h` | Go back to Projects Pane |
+| Tasks | `↑`/`k`/`Shift+Tab` | Go up in task list |
+| Tasks | `↓`/`j`/`Tab` | Go down in task list |
+| Task Detail | `Esc`/`h` | Go back to Tasks Pane |
 | Task Detail | `Space` | Toggle task as done/pending |
 | Task Detail | `d` | Set Due date |
 | Task Detail | `↓`/`↑` | Scroll Up/Down the note editor |
@@ -95,9 +99,36 @@ In case writing in a text input (e,g, new project/task, due date), you have to `
 
 **Tips about using shortcuts efficiently:**  
 
-- `Esc` will bring you a step back - to previous pane in most cases.
-- When you're in Project or Task list, use `↓`/`↑` to navigate the list.
-- When you're in Project or Task list `Enter` will load currently selected Project/Task.
+The interface has 3 primary panels
+1. [**P**]rojects/Task lists
+2. [**T**]asks of selected project or Tasklist
+3. [**D**]etails/actions of selected Project or Task
+
+The following diagram shows navigation shortcuts between the panels.
+```
++------+----------------------+-----------------------+
+|  P   |         T            |         D             |
+|      |                      |                       |
+|    Entr=>    ↓   ↑        Entr=>                    |
+|      |      tab TAB         |                       |
+|   <=Esc/h    j   k       <=Esc/h                    |
+|      |                      |                       |
++------+----------------------+-----------------------+
+```
+
+So, what it's trying to visualize is -
+- Selecting an item with `Enter` will move you to right panel. That means - 
+    - Selecting a Project will load it's tasks and move to Tasks panel
+    - Selecting a Task will load task detail and move to Detail panel
+- Use `Esc` or `h` (like vim) to move to left panel. Details to Tasks to Projects.
+- To navigate a list (Project list or Task list), 
+    - Use `↓` or `j` or `Tab` to go down
+    - Use `↑` or `k` or `Shift+Tab` to go up  
+
+Some More hints:
+- If you are a vim user, think like -`j`/`k` for up/down list and `h` for go left 
+- Think `Esc` as a "step back" - to previous pane in most cases.
+- When you're in a list (Projects or Tasks), `Enter` will load currently selected item.
 - After creating new Project, focus will automatically move to Tasks. Start adding tasks immediately by pressing `n`.   
 - After creating new Task, focus will stay in "new task" input. So that you can add tasks quickly one after another. 
 - After creating new Task, Press `Esc` when you're done creating tasks. 

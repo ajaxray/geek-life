@@ -100,6 +100,12 @@ func (pane *TaskPane) addTaskToList(i int) *tview.List {
 
 func (pane *TaskPane) handleShortcuts(event *tcell.EventKey) *tcell.EventKey {
 	switch event.Rune() {
+	case 'j':
+		pane.list.SetCurrentItem(pane.list.GetCurrentItem() + 1)
+	case 'k':
+		pane.list.SetCurrentItem(pane.list.GetCurrentItem() - 1)
+	case 'h':
+		app.SetFocus(projectPane)
 	case 'n':
 		app.SetFocus(pane.newTask)
 	}
