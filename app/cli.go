@@ -1,10 +1,14 @@
 package main
 
 import (
+	"fmt"
+	"os"
+
 	"github.com/asdine/storm/v3"
 	"github.com/gdamore/tcell"
 	"github.com/rivo/tview"
 
+	"github.com/ajaxray/geek-life/model"
 	"github.com/ajaxray/geek-life/repository"
 	repo "github.com/ajaxray/geek-life/repository/storm"
 	"github.com/ajaxray/geek-life/util"
@@ -34,6 +38,10 @@ func main() {
 			util.LogIfError(err, "Error in closing storm Db")
 		}
 	}()
+
+	if len(os.Args) > 1 && os.Args[1] == "migrate" {
+		migrate()
+	}
 
 	projectRepo = repo.NewProjectRepository(db)
 	taskRepo = repo.NewTaskRepository(db)
@@ -67,6 +75,14 @@ func main() {
 	}
 }
 
+func migrate() {
+	util.FatalIfError(db.ReIndex(&model.Project{}), "Error in migrating Projects")
+	util.FatalIfError(db.ReIndex(&model.Task{}), "Error in migrating Tasks")
+
+	fmt.Println("Migration completed. Start geek-life normally.")
+	os.Exit(0)
+}
+
 func setKeyboardShortcuts() *tview.Application {
 	return app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		if ignoreKeyEvt() {
@@ -92,7 +108,7 @@ func setKeyboardShortcuts() *tview.Application {
 		case 'f':
 			// @TODO : Remove
 			// statusBar.showForSeconds(reflect.TypeOf(app.GetFocus()).String(), 5)
-			statusBar.showForSeconds(projectPane.GetActiveProject().Title, 5)
+			statusBar.showForSeconds(fmt.Sprintf("Due: %#v", taskPane.activeTask), 5)
 		}
 
 		return event
