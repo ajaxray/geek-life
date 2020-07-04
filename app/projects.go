@@ -69,9 +69,9 @@ func (pane *ProjectPane) addNewProject() {
 
 func (pane *ProjectPane) addDynamicLists() {
 	pane.addSection("Dynamic Lists")
-	pane.list.AddItem("- Today", "", 0, yetToImplement("Today's Tasks"))
-	pane.list.AddItem("- Upcoming", "", 0, yetToImplement("Upcoming Tasks"))
-	pane.list.AddItem("- No Due Date", "", 0, yetToImplement("Unscheduled Tasks"))
+	pane.list.AddItem("- Today", "", 0, func() { taskPane.LoadDynamicList("today") })
+	pane.list.AddItem("- Tomorrow", "", 0, func() { taskPane.LoadDynamicList("tomorrow") })
+	pane.list.AddItem("- Upcoming", "", 0, func() { taskPane.LoadDynamicList("upcoming") })
 }
 
 func (pane *ProjectPane) addProjectList() {
@@ -89,7 +89,7 @@ func (pane *ProjectPane) addProjectList() {
 		pane.addProjectToList(i, false)
 	}
 
-	pane.list.SetCurrentItem(pane.projectListStarting)
+	pane.list.SetCurrentItem(2) // Keep "Today" selected on start
 }
 
 func (pane *ProjectPane) addProjectToList(i int, selectItem bool) {

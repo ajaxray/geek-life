@@ -87,7 +87,8 @@ func (td *TaskDetailPane) makeDateRow() *tview.Flex {
 		SetDoneFunc(func(key tcell.Key) {
 			switch key {
 			case tcell.KeyEnter:
-				td.setTaskDate(parseDateInputOrCurrent(td.taskDate.GetText()).Unix(), true)
+				date := parseDateInputOrCurrent(td.taskDate.GetText())
+				td.setTaskDate(date.Unix(), true)
 			case tcell.KeyEsc:
 				td.setTaskDate(td.task.DueDate, false)
 			}
@@ -95,7 +96,7 @@ func (td *TaskDetailPane) makeDateRow() *tview.Flex {
 		})
 
 	todaySelector := func() {
-		td.setTaskDate(time.Now().Unix(), true)
+		td.setTaskDate(parseDateInputOrCurrent("").Unix(), true)
 	}
 
 	nextDaySelector := func() {
@@ -260,7 +261,7 @@ func (td *TaskDetailPane) editInExternalEditor() {
 	}
 
 	// @TODO: Mouse events not being captured after returning from Suspend - fix it
-	// app.EnableMouse(true).
+	app.EnableMouse(true)
 
 	_ = os.Remove(tmpFileName)
 
@@ -303,6 +304,7 @@ func (td *TaskDetailPane) handleShortcuts(event *tcell.EventKey) *tcell.EventKey
 		case ' ':
 			td.toggleTaskStatus()
 		}
+
 	}
 
 	return event

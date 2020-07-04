@@ -41,11 +41,15 @@ func makeLightTextInput(placeholder string) *tview.InputField {
 
 // If input text is a valid date, parse it. Or get current date
 func parseDateInputOrCurrent(inputText string) time.Time {
-	if date, err := time.Parse(dateLayoutISO, inputText); err == nil {
-		return date
+	if dateTime, err := time.Parse(dateLayoutISO, inputText); err == nil {
+		return toDate(dateTime)
 	}
 
-	return time.Now()
+	return toDate(time.Now())
+}
+
+func toDate(dateTime time.Time) time.Time {
+	return time.Date(dateTime.Year(), dateTime.Month(), dateTime.Day(), 0, 0, 0, 0, time.Local)
 }
 
 func makeButton(label string, handler func()) *tview.Button {
@@ -89,5 +93,23 @@ func makeTaskListingTitle(task model.Task) string {
 	if task.Completed {
 		checkbox = "[x[]"
 	}
-	return fmt.Sprintf("[%s]%s %s", getTaskTitleColor(task), checkbox, task.Title)
+
+	prefix := ""
+	if projectPane.GetActiveProject() == nil {
+		if project, err := projectRepo.GetByID(task.ProjectID); err == nil {
+			prefix = project.Title + ":"
+		}
+	}
+
+	return fmt.Sprintf("[%s] %s %s %s", getTaskTitleColor(task), prefix, checkbox, task.Title)
+}
+
+func findProjectByID(id int64) *model.Project {
+	for i := range projectPane.projects {
+		if projectPane.projects[i].ID == id {
+			return &projectPane.projects[i]
+		}
+	}
+
+	return nil
 }

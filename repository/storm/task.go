@@ -30,8 +30,18 @@ func (t *taskRepository) GetAllByProject(project model.Project) ([]model.Task, e
 	return tasks, err
 }
 
-func (t *taskRepository) GetAllByDate(from, to time.Time) ([]model.Task, error) {
-	panic("implement me")
+func (t *taskRepository) GetAllByDate(date time.Time) ([]model.Task, error) {
+	var tasks []model.Task
+
+	err := t.DB.Find("DueDate", getRoundedDueDate(date), &tasks)
+	return tasks, err
+}
+
+func (t *taskRepository) GetAllByDateRange(from, to time.Time) ([]model.Task, error) {
+	var tasks []model.Task
+
+	err := t.DB.Range("DueDate", getRoundedDueDate(from), getRoundedDueDate(to), &tasks)
+	return tasks, err
 }
 
 func (t *taskRepository) GetByID(ID string) (model.Task, error) {
@@ -65,4 +75,12 @@ func (t *taskRepository) UpdateField(task *model.Task, field string, value inter
 
 func (t *taskRepository) Delete(task *model.Task) error {
 	return t.DB.DeleteStruct(task)
+}
+
+func getRoundedDueDate(date time.Time) int64 {
+	if date.IsZero() {
+		return 0
+	}
+
+	return date.Unix()
 }

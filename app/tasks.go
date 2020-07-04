@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"sort"
+	"time"
 
 	"github.com/asdine/storm/v3"
 	"github.com/gdamore/tcell"
@@ -126,6 +128,49 @@ func (pane *TaskPane) LoadProjectTasks(project model.Project) {
 
 	pane.RemoveItem(pane.hint)
 	pane.AddItem(pane.newTask, 1, 0, false)
+}
+
+// LoadDynamicList loads tasks based on logic key
+func (pane *TaskPane) LoadDynamicList(logic string) {
+	var tasks []model.Task
+	var err error
+
+	today := toDate(time.Now())
+	zeroTime := time.Time{}
+	rangeDesc := ""
+
+	switch logic {
+	case "today":
+		tasks, err = pane.taskRepo.GetAllByDateRange(zeroTime, today)
+		rangeDesc = fmt.Sprintf("today and overdue")
+
+	case "tomorrow":
+		tomorrow := today.AddDate(0, 0, 1)
+		tasks, err = pane.taskRepo.GetAllByDate(tomorrow)
+		rangeDesc = fmt.Sprintf("tomorrow")
+
+	case "upcoming":
+		week := today.Add(7 * 24 * time.Hour)
+		tasks, err = pane.taskRepo.GetAllByDateRange(today, week)
+		rangeDesc = fmt.Sprintf("next 7 days")
+	}
+
+	projectPane.activeProject = nil
+	if err == storm.ErrNotFound {
+		statusBar.showForSeconds("[yellow]No Task was scheduled for "+rangeDesc, 5)
+		pane.SetList(tasks)
+	} else if err != nil {
+		statusBar.showForSeconds("[red]Error: "+err.Error(), 5)
+	} else {
+		sort.Slice(tasks, func(i, j int) bool { return tasks[i].ProjectID < tasks[j].ProjectID })
+		pane.SetList(tasks)
+		app.SetFocus(taskPane)
+
+		statusBar.showForSeconds("[yellow] Displaying tasks of "+rangeDesc, 5)
+	}
+
+	pane.RemoveItem(pane.hint)
+	removeThirdCol()
 }
 
 // ActivateTask marks a task as currently active and loads in TaskDetailPane
