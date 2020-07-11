@@ -23,21 +23,22 @@ const dateLayoutHuman = "02 Jan, Monday"
 // TaskDetailPane displays detailed info of a Task
 type TaskDetailPane struct {
 	*tview.Flex
-	taskName, taskDateDisplay *tview.TextView
-	editorHint                *tview.TextView
-	taskDate                  *tview.InputField
-	taskStatusToggle          *tview.Button
-	taskDetailView            *femto.View
-	colorScheme               femto.Colorscheme
-	taskRepo                  repository.TaskRepository
-	task                      *model.Task
+	header           *TaskDetailHeader
+	taskDateDisplay  *tview.TextView
+	editorHint       *tview.TextView
+	taskDate         *tview.InputField
+	taskStatusToggle *tview.Button
+	taskDetailView   *femto.View
+	colorScheme      femto.Colorscheme
+	taskRepo         repository.TaskRepository
+	task             *model.Task
 }
 
 // NewTaskDetailPane initializes and configures a TaskDetailPane
 func NewTaskDetailPane(taskRepo repository.TaskRepository) *TaskDetailPane {
 	pane := TaskDetailPane{
 		Flex:             tview.NewFlex().SetDirection(tview.FlexRow),
-		taskName:         tview.NewTextView().SetDynamicColors(true),
+		header:           NewTaskDetailHeader(taskRepo),
 		taskDateDisplay:  tview.NewTextView().SetDynamicColors(true),
 		taskStatusToggle: makeButton("Complete", nil).SetLabelColor(tcell.ColorLightGray),
 		taskRepo:         taskRepo,
@@ -61,8 +62,7 @@ func NewTaskDetailPane(taskRepo repository.TaskRepository) *TaskDetailPane {
 			SetTextColor(tcell.ColorDimGray), 0, 1, false)
 
 	pane.
-		AddItem(pane.taskName, 2, 1, true).
-		AddItem(makeHorizontalLine(tcell.RuneS3, tcell.ColorGray), 1, 1, false).
+		AddItem(pane.header, 4, 1, true).
 		AddItem(blankCell, 1, 1, false).
 		AddItem(pane.makeDateRow(), 1, 1, true).
 		AddItem(blankCell, 1, 1, false).
@@ -130,8 +130,7 @@ func (td *TaskDetailPane) toggleTaskStatus() {
 	status := !td.task.Completed
 	if taskRepo.UpdateField(td.task, "Completed", status) == nil {
 		td.task.Completed = status
-		td.SetTask(td.task)
-		taskPane.list.SetItemText(taskPane.list.GetCurrentItem(), makeTaskListingTitle(*td.task), "")
+		taskPane.ReloadCurrentTask()
 	}
 }
 
@@ -299,12 +298,11 @@ func (td *TaskDetailPane) handleShortcuts(event *tcell.EventKey) *tcell.EventKey
 			td.editInExternalEditor()
 		case 'd':
 			app.SetFocus(td.taskDate)
-		case 'h':
-			app.SetFocus(taskPane)
+		case 'r':
+			td.header.ShowRename()
 		case ' ':
 			td.toggleTaskStatus()
 		}
-
 	}
 
 	return event
@@ -314,7 +312,7 @@ func (td *TaskDetailPane) handleShortcuts(event *tcell.EventKey) *tcell.EventKey
 func (td *TaskDetailPane) SetTask(task *model.Task) {
 	td.task = task
 
-	td.taskName.SetText(fmt.Sprintf("[%s::b]# %s", getTaskTitleColor(*td.task), td.task.Title))
+	td.header.SetTask(task)
 	td.taskDetailView.Buf = makeBufferFromString(td.task.Details)
 	td.taskDetailView.SetColorscheme(td.colorScheme)
 	td.taskDetailView.Start()

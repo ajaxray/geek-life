@@ -95,6 +95,8 @@ In case writing in a text input (e,g, new project/task, due date), you have to `
 | Task Detail | `d` | Set Due date |
 | Task Detail | `↓`/`↑` | Scroll Up/Down the note editor |
 | Task Detail | `e` | Activate note editor for modification |
+| Task Detail | `v` | Edit task details in external editor (default `vim`) _Have a Known Bug<sup>4</sup>_   |
+| Task Detail | `r` | Rename Task Title |
 | Active Note Editor | `Esc` | Deactivate note editor and save content |
 
 **Tips about using shortcuts efficiently:**  
@@ -172,6 +174,6 @@ You may :thumbsup: issues if you want to increase priority of a feature.
 1. In my Macbook Air, 1.6 GHz Dual-Core Intel Core i5, RAM: 8 GB 1600 MHz DDR3
 2. Using [monakai](https://github.com/sickill/vim-monokai) color scheme for markdown syntax
 3. Habitica is a free habit and productivity app that treats your real life like a game
-
+4. Known Bug: Mouse events (click) don't work after getting back from Editor.
 ---
 > "This is the Book about which there is no doubt, a guidance for those conscious of Allah" - [Al-Quran](http://quran.com)

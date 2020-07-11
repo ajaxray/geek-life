@@ -63,7 +63,6 @@ func NewTaskPane(projectRepo repository.ProjectRepository, taskRepo repository.T
 		case tcell.KeyEsc:
 			app.SetFocus(pane)
 		}
-
 	})
 
 	pane.
@@ -194,6 +193,12 @@ func (pane *TaskPane) ClearCompletedTasks() {
 	}
 
 	statusBar.showForSeconds(fmt.Sprintf("[yellow]%d tasks cleared!", count), 5)
+}
+
+// ReloadCurrentTask Loads the current task - in Task details and listing
+func (pane *TaskPane) ReloadCurrentTask() {
+	pane.list.SetItemText(pane.list.GetCurrentItem(), makeTaskListingTitle(*pane.activeTask), "")
+	taskDetailPane.SetTask(pane.activeTask)
 }
 
 func (pane TaskPane) setHintMessage() {

@@ -97,11 +97,11 @@ func makeTaskListingTitle(task model.Task) string {
 	prefix := ""
 	if projectPane.GetActiveProject() == nil {
 		if project, err := projectRepo.GetByID(task.ProjectID); err == nil {
-			prefix = project.Title + ":"
+			prefix = project.Title + ": "
 		}
 	}
 
-	return fmt.Sprintf("[%s] %s %s %s", getTaskTitleColor(task), prefix, checkbox, task.Title)
+	return fmt.Sprintf("[%s]%s %s%s", getTaskTitleColor(task), checkbox, prefix, task.Title)
 }
 
 func findProjectByID(id int64) *model.Project {
