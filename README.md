@@ -33,6 +33,7 @@
 - [x] Create Task (under project)
 - [x] Set Task due date (as `yyyy-mm-dd`) with shortcut
 - [x] Set Task due date with quick input buttons (today, +1 day, -1 day)
+- [x] Update Task Title
 - [x] Tasklist items should indicate status (done, pending, overdue) using colors 
 - [x] Shortcut for Adding new Project and Task
 - [x] Global shortcuts for jumping to Projects or Tasks panel anytime
@@ -41,10 +42,10 @@
 - [x] Status bar for common shortcuts
 - [x] Status bar should display success/error message of actions
 - [x] Status bar may display quick tips based on focused element
-- [ ] Dynamic lists 
+- [x] Dynamic lists 
     - Today - Due Today and overdue 
-    - Upcoming - Due in one week
-    - Someday - No due date
+    - Tomorrow 
+    - Upcoming - Due in next 7 days
 - [ ] [Habitica](https://habitica.com/)<sup>3</sup> integration - Use it as Habitica client or use Habitica for cloud backup
 - [ ] Time tracking
 
@@ -95,7 +96,7 @@ In case writing in a text input (e,g, new project/task, due date), you have to `
 | Task Detail | `d` | Set Due date |
 | Task Detail | `↓`/`↑` | Scroll Up/Down the note editor |
 | Task Detail | `e` | Activate note editor for modification |
-| Task Detail | `v` | Edit task details in external editor (default `vim`) _Have a Known Bug<sup>4</sup>_   |
+| Task Detail | `v` | Edit task details in external editor (default `vim`) _Known Bug<sup>[4](#footnotes)</sup>_   |
 | Task Detail | `r` | Rename Task Title |
 | Active Note Editor | `Esc` | Deactivate note editor and save content |
 
