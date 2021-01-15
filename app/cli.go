@@ -89,6 +89,16 @@ func setKeyboardShortcuts() *tview.Application {
 			return event
 		}
 
+		// Global shortcuts
+		switch event.Rune() {
+		case 'p':
+			app.SetFocus(projectPane)
+			return nil
+		case 't':
+			app.SetFocus(taskPane)
+			return nil
+		}
+
 		// Handle based on current focus. Handlers may modify event
 		switch {
 		case projectPane.HasFocus():
@@ -97,18 +107,6 @@ func setKeyboardShortcuts() *tview.Application {
 			event = taskPane.handleShortcuts(event)
 		case taskDetailPane.HasFocus():
 			event = taskDetailPane.handleShortcuts(event)
-		}
-
-		// Global shortcuts
-		switch event.Rune() {
-		case 'p':
-			app.SetFocus(projectPane)
-		case 't':
-			app.SetFocus(taskPane)
-		case 'f':
-			// @TODO : Remove
-			// statusBar.showForSeconds(reflect.TypeOf(app.GetFocus()).String(), 5)
-			statusBar.showForSeconds(fmt.Sprintf("Due: %#v", taskPane.activeTask), 5)
 		}
 
 		return event

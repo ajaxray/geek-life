@@ -103,12 +103,16 @@ func (pane *TaskPane) handleShortcuts(event *tcell.EventKey) *tcell.EventKey {
 	switch event.Rune() {
 	case 'j':
 		pane.list.SetCurrentItem(pane.list.GetCurrentItem() + 1)
+		return nil
 	case 'k':
 		pane.list.SetCurrentItem(pane.list.GetCurrentItem() - 1)
+		return nil
 	case 'h':
 		app.SetFocus(projectPane)
+		return nil
 	case 'n':
 		app.SetFocus(pane.newTask)
+		return nil
 	}
 
 	return event

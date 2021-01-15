@@ -286,22 +286,30 @@ func (td *TaskDetailPane) handleShortcuts(event *tcell.EventKey) *tcell.EventKey
 	switch event.Key() {
 	case tcell.KeyEsc:
 		app.SetFocus(taskPane)
+		return nil
 	case tcell.KeyDown:
 		td.taskDetailView.ScrollDown(1)
+		return nil
 	case tcell.KeyUp:
 		td.taskDetailView.ScrollUp(1)
+		return nil
 	case tcell.KeyRune:
 		switch event.Rune() {
 		case 'e':
 			td.activateEditor()
+			return nil
 		case 'v':
 			td.editInExternalEditor()
+			return nil
 		case 'd':
 			app.SetFocus(td.taskDate)
+			return nil
 		case 'r':
 			td.header.ShowRename()
+			return nil
 		case ' ':
 			td.toggleTaskStatus()
+			return nil
 		}
 	}
 
