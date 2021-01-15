@@ -7,7 +7,7 @@ import (
 	"os/exec"
 	"time"
 
-	"github.com/gdamore/tcell"
+	"github.com/gdamore/tcell/v2"
 	"github.com/pgavlin/femto"
 	"github.com/pgavlin/femto/runtime"
 	"github.com/rivo/tview"
@@ -239,14 +239,14 @@ func (td *TaskDetailPane) editInExternalEditor() {
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
 		if err := cmd.Run(); err != nil {
-			messageToShow = "[red::]Failed to save content. Try in-app editing by pressing i"
+			messageToShow = "[red::]Failed to save content. Try in-app editing by pressing e"
 			return
 		}
 
 		if content, readErr := ioutil.ReadFile(tmpFileName); readErr == nil {
 			updatedContent = string(content)
 		} else {
-			messageToShow = "[red::]Failed to load external editing. Try in-app editing by pressing i"
+			messageToShow = "[red::]Failed to load external editing. Try in-app editing by pressing e"
 		}
 	})
 
