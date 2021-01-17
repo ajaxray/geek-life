@@ -35,6 +35,7 @@
 - [x] Set Task due date with quick input buttons (today, +1 day, -1 day)
 - [x] Update Task Title
 - [x] Tasklist items should indicate status (done, pending, overdue) using colors 
+- [ ] Pin Tasks
 - [x] Shortcut for Adding new Project and Task
 - [x] Global shortcuts for jumping to Projects or Tasks panel anytime
 - [x] Cleanup all completed tasks of project
@@ -46,7 +47,9 @@
     - Today - Due Today and overdue 
     - Tomorrow 
     - Upcoming - Due in next 7 days
-- [ ] [Habitica](https://habitica.com/)<sup>3</sup> integration - Use it as Habitica client or use Habitica for cloud backup
+- [ ] Integrations
+    - Google Tasks 
+    - (Share your ideas)
 - [ ] Time tracking
 
 ### :rocket: Ready for action (installing and running)
@@ -80,25 +83,25 @@ You'll see a currently focused pane bordered with double line.
 
 In case writing in a text input (e,g, new project/task, due date), you have to `Enter` to submit/save. 
 
-| Context | Shortcut | Action |
-|---|:---:|---|
-| Global | `p` | Go to Project list |
-| Global | `t` | Go to Task list |
-| Projects | `n` | New Project |
-| Projects | `↑`/`k`/`Shift+Tab` | Go up in project list |
-| Projects | `↓`/`j`/`Tab` | Go down in project list |
-| Tasks | `n` | New Task |
-| Tasks | `Esc`/`h` | Go back to Projects Pane |
-| Tasks | `↑`/`k`/`Shift+Tab` | Go up in task list |
-| Tasks | `↓`/`j`/`Tab` | Go down in task list |
-| Task Detail | `Esc`/`h` | Go back to Tasks Pane |
-| Task Detail | `Space` | Toggle task as done/pending |
-| Task Detail | `d` | Set Due date |
-| Task Detail | `↓`/`↑` | Scroll Up/Down the note editor |
-| Task Detail | `e` | Activate note editor for modification |
-| Task Detail | `v` | Edit task details in external editor (default `vim`) _Known Bug<sup>[4](#footnotes)</sup>_   |
-| Task Detail | `r` | Rename Task Title |
-| Active Note Editor | `Esc` | Deactivate note editor and save content |
+| Context            | Shortcut            | Action                                               |
+| ---                | :---:               | ---                                                  |
+| Global             | `p`                 | Go to Project list                                   |
+| Global             | `t`                 | Go to Task list                                      |
+| Projects           | `n`                 | New Project                                          |
+| Projects           | `↑`/`k`/`Shift+Tab` | Go up in project list                                |
+| Projects           | `↓`/`j`/`Tab`       | Go down in project list                              |
+| Tasks              | `n`                 | New Task                                             |
+| Tasks              | `Esc`/`h`           | Go back to Projects Pane                             |
+| Tasks              | `↑`/`k`/`Shift+Tab` | Go up in task list                                   |
+| Tasks              | `↓`/`j`/`Tab`       | Go down in task list                                 |
+| Task Detail        | `Esc`/`h`           | Go back to Tasks Pane                                |
+| Task Detail        | `Space`             | Toggle task as done/pending                          |
+| Task Detail        | `d`                 | Set Due date                                         |
+| Task Detail        | `↓`/`↑`             | Scroll Up/Down the note editor                       |
+| Task Detail        | `e`                 | Activate note editor for modification                |
+| Task Detail        | `v`                 | Edit task details in external editor (default `vim`) |
+| Task Detail        | `r`                 | Rename Task Title                                    |
+| Active Note Editor | `Esc`               | Deactivate note editor and save content              |
 
 **Tips about using shortcuts efficiently:**  
 
@@ -174,7 +177,5 @@ You may :thumbsup: issues if you want to increase priority of a feature.
 ### Footnotes 
 1. In my Macbook Air, 1.6 GHz Dual-Core Intel Core i5, RAM: 8 GB 1600 MHz DDR3
 2. Using [monakai](https://github.com/sickill/vim-monokai) color scheme for markdown syntax
-3. Habitica is a free habit and productivity app that treats your real life like a game
-4. Known Bug: Mouse events (click) don't work after getting back from Editor.
 ---
 > "This is the Book about which there is no doubt, a guidance for those conscious of Allah" - [Al-Quran](http://quran.com)

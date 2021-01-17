@@ -19,8 +19,8 @@ const (
 	messagePage = "message"
 )
 
-func makeStatusBar(app *tview.Application) *StatusBar {
-	statusBar := StatusBar{
+func prepareStatusBar(app *tview.Application) *StatusBar {
+	statusBar = &StatusBar{
 		Pages:     tview.NewPages(),
 		message:   tview.NewTextView().SetDynamicColors(true).SetText("Loading..."),
 		container: app,
@@ -39,7 +39,7 @@ func makeStatusBar(app *tview.Application) *StatusBar {
 		true,
 	)
 
-	return &statusBar
+	return statusBar
 }
 
 func (bar *StatusBar) showForSeconds(message string, timeout int) {

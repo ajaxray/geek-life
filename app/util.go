@@ -34,9 +34,9 @@ func makeHorizontalLine(lineChar rune, color tcell.Color) *tview.TextView {
 func makeLightTextInput(placeholder string) *tview.InputField {
 	return tview.NewInputField().
 		SetPlaceholder(placeholder).
-		SetPlaceholderTextColor(tcell.ColorYellow).
+		SetPlaceholderTextColor(tcell.ColorDarkSlateBlue).
 		SetFieldTextColor(tcell.ColorBlack).
-		SetFieldBackgroundColor(tcell.ColorGray)
+		SetFieldBackgroundColor(tcell.ColorLightBlue)
 }
 
 // If input text is a valid date, parse it. Or get current date
@@ -78,11 +78,18 @@ func removeThirdCol() {
 }
 
 func getTaskTitleColor(task model.Task) string {
-	colorName := "olive"
+	colorName := "smokewhite"
+
 	if task.Completed {
-		colorName = "lime"
-	} else if task.DueDate != 0 && task.DueDate < time.Now().Truncate(24*time.Hour).Unix() {
-		colorName = "red"
+		colorName = "green"
+	} else if task.DueDate != 0 {
+		dayDiff := int(time.Unix(task.DueDate, 0).Sub(time.Now()).Hours() / 24)
+
+		if dayDiff == 0 {
+			colorName = "orange"
+		} else if dayDiff < 0 {
+			colorName = "red"
+		}
 	}
 
 	return colorName

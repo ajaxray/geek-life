@@ -37,6 +37,7 @@ func NewTaskPane(projectRepo repository.ProjectRepository, taskRepo repository.T
 		hint:        tview.NewTextView().SetTextColor(tcell.ColorYellow).SetTextAlign(tview.AlignCenter),
 	}
 
+	pane.list.SetSelectedBackgroundColor(tcell.ColorDarkBlue)
 	pane.list.SetDoneFunc(func() {
 		app.SetFocus(projectPane)
 	})
