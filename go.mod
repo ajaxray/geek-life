@@ -6,6 +6,7 @@ require (
 	github.com/DataDog/zstd v1.4.5 // indirect
 	github.com/Sereal/Sereal v0.0.0-20200820125258-a016b7cda3f3 // indirect
 	github.com/asdine/storm/v3 v3.2.1
+	github.com/atotto/clipboard v0.1.4 // indirect
 	github.com/gdamore/tcell/v2 v2.1.0
 	github.com/golang/protobuf v1.4.3 // indirect
 	github.com/golang/snappy v0.0.2 // indirect

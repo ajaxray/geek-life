@@ -37,7 +37,9 @@ func NewTaskDetailHeader(taskRepo repository.TaskRepository) *TaskDetailHeader {
 	buttons := tview.NewFlex().
 		AddItem(tview.NewTextView().SetTextColor(tcell.ColorDimGray).SetText("r = Rename"), 0, 1, false).
 		AddItem(blankCell, 0, 1, false).
-		AddItem(makeButton("rename", func() { header.ShowRename() }), 8, 0, false)
+		AddItem(makeButton("[::ub]r[::-]ename", func() { header.ShowRename() }), 8, 0, false).
+		AddItem(blankCell, 1, 0, false).
+		AddItem(makeButton("e[::ub]x[::-]port", func() { taskDetailPane.Export() }), 8, 0, false)
 
 	header.
 		AddItem(header.pages, 1, 1, true).

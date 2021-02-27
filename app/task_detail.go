@@ -1,12 +1,14 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"io/ioutil"
 	"os"
 	"os/exec"
 	"time"
 
+	"github.com/atotto/clipboard"
 	"github.com/gdamore/tcell/v2"
 	"github.com/pgavlin/femto"
 	"github.com/pgavlin/femto/runtime"
@@ -49,7 +51,7 @@ func NewTaskDetailPane(taskRepo repository.TaskRepository) *TaskDetailPane {
 	toggleHint := tview.NewTextView().SetTextColor(tcell.ColorDimGray).SetText("<space> to toggle")
 	pane.taskStatusToggle.SetSelectedFunc(pane.toggleTaskStatus)
 
-	pane.editorHint = tview.NewTextView().SetText(" e to edit, ↓↑ to scroll").SetTextColor(tcell.ColorDimGray)
+	pane.editorHint = tview.NewTextView().SetText(" e = edit, v = external, ↓↑ = scroll").SetTextColor(tcell.ColorDimGray)
 
 	// Prepare static (no external interaction) elements
 	editorLabel := tview.NewFlex().
@@ -58,7 +60,7 @@ func NewTaskDetailPane(taskRepo repository.TaskRepository) *TaskDetailPane {
 	editorHelp := tview.NewFlex().
 		AddItem(pane.editorHint, 0, 1, false).
 		AddItem(tview.NewTextView().SetTextAlign(tview.AlignRight).
-			SetText("syntax:markdown theme:monakai").
+			SetText("syntax:markdown (monakai)").
 			SetTextColor(tcell.ColorDimGray), 0, 1, false)
 
 	pane.
@@ -78,11 +80,25 @@ func NewTaskDetailPane(taskRepo repository.TaskRepository) *TaskDetailPane {
 	return &pane
 }
 
+func (td *TaskDetailPane) Export() {
+	var content bytes.Buffer
+
+	content.WriteString("# " + td.task.Title + " \n")
+	if td.taskDate.GetText() != "" {
+		content.WriteString("\n> Due Date: " + td.taskDate.GetText() + " \n")
+	}
+	content.WriteString("\n" + td.task.Details + " \n")
+
+	clipboard.WriteAll(content.String())
+	app.SetFocus(td)
+	statusBar.showForSeconds("Task copyed. Try Pasting anywhere.", 5)
+}
+
 func (td *TaskDetailPane) makeDateRow() *tview.Flex {
 
 	td.taskDate = makeLightTextInput("yyyy-mm-dd").
 		SetLabel("Set:").
-		SetLabelColor(tcell.ColorGray).
+		SetLabelColor(tcell.ColorWhiteSmoke).
 		SetFieldWidth(12).
 		SetDoneFunc(func(key tcell.Key) {
 			switch key {
@@ -220,7 +236,7 @@ func (td *TaskDetailPane) activateEditor() {
 func (td *TaskDetailPane) deactivateEditor() {
 	td.taskDetailView.Readonly = true
 	td.taskDetailView.SetBorderColor(tcell.ColorLightSlateGray)
-	td.editorHint.SetText(" e to edit, ↓↑ to scroll")
+	td.editorHint.SetText(" e = edit, v = external, ↓↑ = scroll")
 	app.SetFocus(td)
 }
 
@@ -259,7 +275,6 @@ func (td *TaskDetailPane) editInExternalEditor() {
 		td.SetTask(td.task)
 	}
 
-	// @TODO: Mouse events not being captured after returning from Suspend - fix it
 	app.EnableMouse(true)
 
 	_ = os.Remove(tmpFileName)
@@ -309,6 +324,9 @@ func (td *TaskDetailPane) handleShortcuts(event *tcell.EventKey) *tcell.EventKey
 			return nil
 		case ' ':
 			td.toggleTaskStatus()
+			return nil
+		case 'x':
+			td.Export()
 			return nil
 		}
 	}

@@ -35,6 +35,7 @@
 - [x] Set Task due date with quick input buttons (today, +1 day, -1 day)
 - [x] Update Task Title
 - [x] Tasklist items should indicate status (done, pending, overdue) using colors 
+- [x] Export Tasks (Copy title, dueDate and description to clipboard as Markdown)
 - [ ] Pin Tasks
 - [x] Shortcut for Adding new Project and Task
 - [x] Global shortcuts for jumping to Projects or Tasks panel anytime
@@ -101,6 +102,7 @@ In case writing in a text input (e,g, new project/task, due date), you have to `
 | Task Detail        | `e`                 | Activate note editor for modification                |
 | Task Detail        | `v`                 | Edit task details in external editor (default `vim`) |
 | Task Detail        | `r`                 | Rename Task Title                                    |
+| Task Detail        | `x`                 | Export Task to clipboard                                    |
 | Active Note Editor | `Esc`               | Deactivate note editor and save content              |
 
 **Tips about using shortcuts efficiently:**  
