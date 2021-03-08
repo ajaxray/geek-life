@@ -18,8 +18,8 @@ func NewProjectDetailPane() *ProjectDetailPane {
 	pane := ProjectDetailPane{
 		Flex: tview.NewFlex().SetDirection(tview.FlexRow),
 	}
-	deleteBtn := makeButton("Delete Project", projectPane.RemoveActivateProject)
-	clearBtn := makeButton("Clear Completed Tasks", taskPane.ClearCompletedTasks)
+	deleteBtn := makeButton("[::u]D[::-]elete Project", projectPane.RemoveActivateProject)
+	clearBtn := makeButton("[::u]C[::-]lear Completed Tasks", taskPane.ClearCompletedTasks)
 
 	deleteBtn.SetBackgroundColor(tcell.ColorRed)
 	pane.
@@ -37,4 +37,21 @@ func NewProjectDetailPane() *ProjectDetailPane {
 func (pd *ProjectDetailPane) SetProject(project *model.Project) {
 	pd.project = project
 	pd.SetTitle("[::b]" + pd.project.Title)
+}
+
+func (pd *ProjectDetailPane) isShowing() bool {
+	return taskPane.activeTask == nil && projectPane.activeProject != nil
+}
+
+func (pd *ProjectDetailPane) handleShortcuts(event *tcell.EventKey) *tcell.EventKey {
+	switch event.Rune() {
+	case 'd':
+		projectPane.RemoveActivateProject()
+		return nil
+	case 'c':
+		taskPane.ClearCompletedTasks()
+		return nil
+	}
+
+	return event
 }

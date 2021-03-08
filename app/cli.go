@@ -89,6 +89,9 @@ func setKeyboardShortcuts() *tview.Application {
 			event = projectPane.handleShortcuts(event)
 		case taskPane.HasFocus():
 			event = taskPane.handleShortcuts(event)
+			if event != nil && projectDetailPane.isShowing() {
+				event = projectDetailPane.handleShortcuts(event)
+			}
 		case taskDetailPane.HasFocus():
 			event = taskDetailPane.handleShortcuts(event)
 		}

@@ -80,6 +80,7 @@ func NewTaskPane(projectRepo repository.ProjectRepository, taskRepo repository.T
 func (pane *TaskPane) ClearList() {
 	pane.list.Clear()
 	pane.tasks = nil
+	pane.activeTask = nil
 
 	pane.RemoveItem(pane.newTask)
 }
@@ -160,6 +161,8 @@ func (pane *TaskPane) LoadDynamicList(logic string) {
 	}
 
 	projectPane.activeProject = nil
+	taskPane.ClearList()
+
 	if err == storm.ErrNotFound {
 		statusBar.showForSeconds("[yellow]No Task was scheduled for "+rangeDesc, 5)
 		pane.SetList(tasks)
