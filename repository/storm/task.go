@@ -33,8 +33,20 @@ func (t *taskRepository) GetAllByProject(project model.Project) ([]model.Task, e
 func (t *taskRepository) GetAllByDate(date time.Time) ([]model.Task, error) {
 	var tasks []model.Task
 
-	err := t.DB.Find("DueDate", getRoundedDueDate(date), &tasks)
-	return tasks, err
+	if date.IsZero() {
+		var allTasks []model.Task
+		err := t.DB.AllByIndex("ProjectID", &allTasks)
+		for _, t := range allTasks {
+			if t.DueDate == 0 {
+				tasks = append(tasks, t)
+			}
+		}
+
+		return tasks, err
+	} else {
+		err := t.DB.Find("DueDate", getRoundedDueDate(date), &tasks)
+		return tasks, err
+	}
 }
 
 func (t *taskRepository) GetAllByDateRange(from, to time.Time) ([]model.Task, error) {

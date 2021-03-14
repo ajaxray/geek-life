@@ -72,6 +72,7 @@ func (pane *ProjectPane) addDynamicLists() {
 	pane.list.AddItem("- Today", "", 0, func() { taskPane.LoadDynamicList("today") })
 	pane.list.AddItem("- Tomorrow", "", 0, func() { taskPane.LoadDynamicList("tomorrow") })
 	pane.list.AddItem("- Upcoming", "", 0, func() { taskPane.LoadDynamicList("upcoming") })
+	pane.list.AddItem("- Unscheduled", "", 0, func() { taskPane.LoadDynamicList("unscheduled") })
 }
 
 func (pane *ProjectPane) addProjectList() {

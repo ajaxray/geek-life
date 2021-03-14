@@ -158,13 +158,17 @@ func (pane *TaskPane) LoadDynamicList(logic string) {
 		week := today.Add(7 * 24 * time.Hour)
 		tasks, err = pane.taskRepo.GetAllByDateRange(today, week)
 		rangeDesc = fmt.Sprintf("next 7 days")
+
+	case "unscheduled":
+		tasks, err = pane.taskRepo.GetAllByDate(zeroTime)
+		rangeDesc = fmt.Sprintf("Unscheduled (task with no due date) ")
 	}
 
 	projectPane.activeProject = nil
 	taskPane.ClearList()
 
 	if err == storm.ErrNotFound {
-		statusBar.showForSeconds("[yellow]No Task was scheduled for "+rangeDesc, 5)
+		statusBar.showForSeconds("[yellow]No Task in list "+rangeDesc, 5)
 		pane.SetList(tasks)
 	} else if err != nil {
 		statusBar.showForSeconds("[red]Error: "+err.Error(), 5)
