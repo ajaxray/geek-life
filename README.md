@@ -48,7 +48,9 @@
     - Today - Due Today and overdue 
     - Tomorrow 
     - Upcoming - Due in next 7 days
+    - Unscheduled - tasks without due date
 - [ ] Integrations
+    - todo.txt (coming soon...)
     - Google Tasks 
     - (Share your ideas)
 - [ ] Time tracking
@@ -75,7 +77,7 @@ Done! *Manage your tasks your way!*
 
 ## :keyboard: Keyboard shortcuts
 
-Shortcut key for a pane/element will be marked with underline.
+Shortcut key for a pane/element will be **marked with underline**.
 
 Some shortcuts are global, some are contextual. 
 Contextual shortcuts will be applied according to focused pane/element.  
@@ -95,6 +97,8 @@ In case writing in a text input (e,g, new project/task, due date), you have to `
 | Tasks              | `Esc`/`h`           | Go back to Projects Pane                             |
 | Tasks              | `↑`/`k`/`Shift+Tab` | Go up in task list                                   |
 | Tasks              | `↓`/`j`/`Tab`       | Go down in task list                                 |
+| Tasks              | `c`                 | Clear completed tasks                                |
+| Tasks              | `d`                 | Delete Project                                       |
 | Task Detail        | `Esc`/`h`           | Go back to Tasks Pane                                |
 | Task Detail        | `Space`             | Toggle task as done/pending                          |
 | Task Detail        | `d`                 | Set Due date                                         |
@@ -118,8 +122,8 @@ The following diagram shows navigation shortcuts between the panels.
 |  P   |         T            |         D             |
 |      |                      |                       |
 |    Entr=>    ↓   ↑        Entr=>                    |
-|      |      tab TAB         |                       |
-|   <=Esc/h    j   k       <=Esc/h                    |
+|      |       /   /          |                       |
+|   <=Esc      j   k        <=Esc                     |
 |      |                      |                       |
 +------+----------------------+-----------------------+
 ```
@@ -128,7 +132,7 @@ So, what it's trying to visualize is -
 - Selecting an item with `Enter` will move you to right panel. That means - 
     - Selecting a Project will load it's tasks and move to Tasks panel
     - Selecting a Task will load task detail and move to Detail panel
-- Use `Esc` or `h` (like vim) to move to left panel. Details to Tasks to Projects.
+- Use `Esc` to move back to left panel. From Details to Tasks to Projects.
 - To navigate a list (Project list or Task list), 
     - Use `↓` or `j` or `Tab` to go down
     - Use `↑` or `k` or `Shift+Tab` to go up  

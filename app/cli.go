@@ -116,7 +116,7 @@ func prepareContentPages() *tview.Flex {
 
 func makeTitleBar() *tview.Flex {
 	titleText := tview.NewTextView().SetText("[lime::b]Geek-life [::-]- Task Manager for geeks!").SetDynamicColors(true)
-	versionInfo := tview.NewTextView().SetText("[::d]Version: 0.1.1").SetTextAlign(tview.AlignRight).SetDynamicColors(true)
+	versionInfo := tview.NewTextView().SetText("[::d]Version: 0.1.2").SetTextAlign(tview.AlignRight).SetDynamicColors(true)
 
 	return tview.NewFlex().
 		AddItem(titleText, 0, 2, false).
