@@ -147,17 +147,17 @@ func (pane *TaskPane) LoadDynamicList(logic string) {
 	switch logic {
 	case "today":
 		tasks, err = pane.taskRepo.GetAllByDateRange(zeroTime, today)
-		rangeDesc = fmt.Sprintf("today and overdue")
+		rangeDesc = fmt.Sprintf("Today (and overdue)")
 
 	case "tomorrow":
 		tomorrow := today.AddDate(0, 0, 1)
 		tasks, err = pane.taskRepo.GetAllByDate(tomorrow)
-		rangeDesc = fmt.Sprintf("tomorrow")
+		rangeDesc = fmt.Sprintf("Tomorrow")
 
 	case "upcoming":
 		week := today.Add(7 * 24 * time.Hour)
 		tasks, err = pane.taskRepo.GetAllByDateRange(today, week)
-		rangeDesc = fmt.Sprintf("next 7 days")
+		rangeDesc = fmt.Sprintf("Upcoming (next 7 days)")
 
 	case "unscheduled":
 		tasks, err = pane.taskRepo.GetAllByDate(zeroTime)
@@ -168,7 +168,7 @@ func (pane *TaskPane) LoadDynamicList(logic string) {
 	taskPane.ClearList()
 
 	if err == storm.ErrNotFound {
-		statusBar.showForSeconds("[yellow]No Task in list "+rangeDesc, 5)
+		statusBar.showForSeconds("[yellow]No Task in list - "+rangeDesc, 5)
 		pane.SetList(tasks)
 	} else if err != nil {
 		statusBar.showForSeconds("[red]Error: "+err.Error(), 5)
