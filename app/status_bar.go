@@ -19,6 +19,10 @@ const (
 	messagePage = "message"
 )
 
+// Used to skip queued restore of statusBar
+// in case of new showForSeconds within waiting period
+var restorInQ = 0
+
 func prepareStatusBar(app *tview.Application) *StatusBar {
 	statusBar = &StatusBar{
 		Pages:     tview.NewPages(),
@@ -42,6 +46,12 @@ func prepareStatusBar(app *tview.Application) *StatusBar {
 	return statusBar
 }
 
+func (bar *StatusBar) restore() {
+	bar.container.QueueUpdateDraw(func() {
+		bar.SwitchToPage(defaultPage)
+	})
+}
+
 func (bar *StatusBar) showForSeconds(message string, timeout int) {
 	if bar.container == nil {
 		return
@@ -49,11 +59,15 @@ func (bar *StatusBar) showForSeconds(message string, timeout int) {
 
 	bar.message.SetText(message)
 	bar.SwitchToPage(messagePage)
+	restorInQ++
 
 	go func() {
 		time.Sleep(time.Second * time.Duration(timeout))
-		bar.container.QueueUpdateDraw(func() {
-			bar.SwitchToPage(defaultPage)
-		})
+
+		// Apply restore only if this is the last pending restore
+		if restorInQ == 1 {
+			bar.restore()
+		}
+		restorInQ--
 	}()
 }
