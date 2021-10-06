@@ -102,11 +102,14 @@ In case writing in a text input (e,g, new project/task, due date), you have to `
 | Task Detail        | `Esc`/`h`           | Go back to Tasks Pane                                |
 | Task Detail        | `Space`             | Toggle task as done/pending                          |
 | Task Detail        | `d`                 | Set Due date                                         |
+| Task Detail        | `o`                 | Set Due date to today                                |
+| Task Detail        | `+`                 | Due date plus 1                                      |
+| Task Detail        | `-`                 | Due date minus 1                                     |
 | Task Detail        | `↓`/`↑`             | Scroll Up/Down the note editor                       |
 | Task Detail        | `e`                 | Activate note editor for modification                |
 | Task Detail        | `v`                 | Edit task details in external editor (default `vim`) |
 | Task Detail        | `r`                 | Rename Task Title                                    |
-| Task Detail        | `x`                 | Export Task to clipboard                                    |
+| Task Detail        | `x`                 | Export Task to clipboard                             |
 | Active Note Editor | `Esc`               | Deactivate note editor and save content              |
 
 **Tips about using shortcuts efficiently:**  

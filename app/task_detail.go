@@ -56,7 +56,7 @@ func NewTaskDetailPane(taskRepo repository.TaskRepository) *TaskDetailPane {
 	// Prepare static (no external interaction) elements
 	editorLabel := tview.NewFlex().
 		AddItem(tview.NewTextView().SetText("Task Not[::u]e[::-]:").SetDynamicColors(true), 0, 1, false).
-		AddItem(makeButton("edit", func() { pane.activateEditor() }), 6, 0, false)
+		AddItem(makeButton("[::u]e[::-]dit", func() { pane.activateEditor() }), 6, 0, false)
 	editorHelp := tview.NewFlex().
 		AddItem(pane.editorHint, 0, 1, false).
 		AddItem(tview.NewTextView().SetTextAlign(tview.AlignRight).
@@ -127,11 +127,11 @@ func (td *TaskDetailPane) makeDateRow() *tview.Flex {
 		AddItem(td.taskDateDisplay, 0, 2, true).
 		AddItem(td.taskDate, 14, 0, true).
 		AddItem(blankCell, 1, 0, false).
-		AddItem(makeButton("today", todaySelector), 8, 1, false).
+		AddItem(makeButton("t[::u]o[::-]day", todaySelector), 8, 1, false).
 		AddItem(blankCell, 1, 0, false).
-		AddItem(makeButton("+1", nextDaySelector), 4, 1, false).
+		AddItem(makeButton("[::u]+[::-]1", nextDaySelector), 4, 1, false).
 		AddItem(blankCell, 1, 0, false).
-		AddItem(makeButton("-1", prevDaySelector), 4, 1, false)
+		AddItem(makeButton("[::u]-[::-]1", prevDaySelector), 4, 1, false)
 }
 
 func (td *TaskDetailPane) updateToggleDisplay() {
@@ -327,6 +327,15 @@ func (td *TaskDetailPane) handleShortcuts(event *tcell.EventKey) *tcell.EventKey
 			return nil
 		case 'x':
 			td.Export()
+			return nil
+		case 'o':
+			td.setTaskDate(parseDateInputOrCurrent("").Unix(), true)
+			return nil
+		case '+':
+			td.setTaskDate(parseDateInputOrCurrent(td.taskDate.GetText()).AddDate(0, 0, 1).Unix(), true)
+			return nil
+		case '-':
+			td.setTaskDate(parseDateInputOrCurrent(td.taskDate.GetText()).AddDate(0, 0, -1).Unix(), true)
 			return nil
 		}
 	}
