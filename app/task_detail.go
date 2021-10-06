@@ -111,27 +111,15 @@ func (td *TaskDetailPane) makeDateRow() *tview.Flex {
 			app.SetFocus(td)
 		})
 
-	todaySelector := func() {
-		td.setTaskDate(parseDateInputOrCurrent("").Unix(), true)
-	}
-
-	nextDaySelector := func() {
-		td.setTaskDate(parseDateInputOrCurrent(td.taskDate.GetText()).AddDate(0, 0, 1).Unix(), true)
-	}
-
-	prevDaySelector := func() {
-		td.setTaskDate(parseDateInputOrCurrent(td.taskDate.GetText()).AddDate(0, 0, -1).Unix(), true)
-	}
-
 	return tview.NewFlex().
 		AddItem(td.taskDateDisplay, 0, 2, true).
 		AddItem(td.taskDate, 14, 0, true).
 		AddItem(blankCell, 1, 0, false).
-		AddItem(makeButton("t[::u]o[::-]day", todaySelector), 8, 1, false).
+		AddItem(makeButton("t[::u]o[::-]day", td.todaySelector), 8, 1, false).
 		AddItem(blankCell, 1, 0, false).
-		AddItem(makeButton("[::u]+[::-]1", nextDaySelector), 4, 1, false).
+		AddItem(makeButton("[::u]+[::-]1", td.nextDaySelector), 4, 1, false).
 		AddItem(blankCell, 1, 0, false).
-		AddItem(makeButton("[::u]-[::-]1", prevDaySelector), 4, 1, false)
+		AddItem(makeButton("[::u]-[::-]1", td.prevDaySelector), 4, 1, false)
 }
 
 func (td *TaskDetailPane) updateToggleDisplay() {
@@ -329,13 +317,13 @@ func (td *TaskDetailPane) handleShortcuts(event *tcell.EventKey) *tcell.EventKey
 			td.Export()
 			return nil
 		case 'o':
-			td.setTaskDate(parseDateInputOrCurrent("").Unix(), true)
+			td.todaySelector()
 			return nil
 		case '+':
-			td.setTaskDate(parseDateInputOrCurrent(td.taskDate.GetText()).AddDate(0, 0, 1).Unix(), true)
+			td.nextDaySelector()
 			return nil
 		case '-':
-			td.setTaskDate(parseDateInputOrCurrent(td.taskDate.GetText()).AddDate(0, 0, -1).Unix(), true)
+			td.prevDaySelector()
 			return nil
 		}
 	}
@@ -354,4 +342,16 @@ func (td *TaskDetailPane) SetTask(task *model.Task) {
 	td.setTaskDate(td.task.DueDate, false)
 	td.updateToggleDisplay()
 	td.deactivateEditor()
+}
+
+func (td *TaskDetailPane) todaySelector() {
+	td.setTaskDate(parseDateInputOrCurrent("").Unix(), true)
+}
+
+func (td *TaskDetailPane) nextDaySelector() {
+	td.setTaskDate(parseDateInputOrCurrent(td.taskDate.GetText()).AddDate(0, 0, 1).Unix(), true)
+}
+
+func (td *TaskDetailPane) prevDaySelector() {
+	td.setTaskDate(parseDateInputOrCurrent(td.taskDate.GetText()).AddDate(0, 0, -1).Unix(), true)
 }
