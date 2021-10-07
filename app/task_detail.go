@@ -56,7 +56,7 @@ func NewTaskDetailPane(taskRepo repository.TaskRepository) *TaskDetailPane {
 	// Prepare static (no external interaction) elements
 	editorLabel := tview.NewFlex().
 		AddItem(tview.NewTextView().SetText("Task Not[::u]e[::-]:").SetDynamicColors(true), 0, 1, false).
-		AddItem(makeButton("edit", func() { pane.activateEditor() }), 6, 0, false)
+		AddItem(makeButton("[::u]e[::-]dit", func() { pane.activateEditor() }), 6, 0, false)
 	editorHelp := tview.NewFlex().
 		AddItem(pane.editorHint, 0, 1, false).
 		AddItem(tview.NewTextView().SetTextAlign(tview.AlignRight).
@@ -111,27 +111,15 @@ func (td *TaskDetailPane) makeDateRow() *tview.Flex {
 			app.SetFocus(td)
 		})
 
-	todaySelector := func() {
-		td.setTaskDate(parseDateInputOrCurrent("").Unix(), true)
-	}
-
-	nextDaySelector := func() {
-		td.setTaskDate(parseDateInputOrCurrent(td.taskDate.GetText()).AddDate(0, 0, 1).Unix(), true)
-	}
-
-	prevDaySelector := func() {
-		td.setTaskDate(parseDateInputOrCurrent(td.taskDate.GetText()).AddDate(0, 0, -1).Unix(), true)
-	}
-
 	return tview.NewFlex().
 		AddItem(td.taskDateDisplay, 0, 2, true).
 		AddItem(td.taskDate, 14, 0, true).
 		AddItem(blankCell, 1, 0, false).
-		AddItem(makeButton("today", todaySelector), 8, 1, false).
+		AddItem(makeButton("t[::u]o[::-]day", td.todaySelector), 8, 1, false).
 		AddItem(blankCell, 1, 0, false).
-		AddItem(makeButton("+1", nextDaySelector), 4, 1, false).
+		AddItem(makeButton("[::u]+[::-]1", td.nextDaySelector), 4, 1, false).
 		AddItem(blankCell, 1, 0, false).
-		AddItem(makeButton("-1", prevDaySelector), 4, 1, false)
+		AddItem(makeButton("[::u]-[::-]1", td.prevDaySelector), 4, 1, false)
 }
 
 func (td *TaskDetailPane) updateToggleDisplay() {
@@ -328,6 +316,15 @@ func (td *TaskDetailPane) handleShortcuts(event *tcell.EventKey) *tcell.EventKey
 		case 'x':
 			td.Export()
 			return nil
+		case 'o':
+			td.todaySelector()
+			return nil
+		case '+':
+			td.nextDaySelector()
+			return nil
+		case '-':
+			td.prevDaySelector()
+			return nil
 		}
 	}
 
@@ -345,4 +342,16 @@ func (td *TaskDetailPane) SetTask(task *model.Task) {
 	td.setTaskDate(td.task.DueDate, false)
 	td.updateToggleDisplay()
 	td.deactivateEditor()
+}
+
+func (td *TaskDetailPane) todaySelector() {
+	td.setTaskDate(parseDateInputOrCurrent("").Unix(), true)
+}
+
+func (td *TaskDetailPane) nextDaySelector() {
+	td.setTaskDate(parseDateInputOrCurrent(td.taskDate.GetText()).AddDate(0, 0, 1).Unix(), true)
+}
+
+func (td *TaskDetailPane) prevDaySelector() {
+	td.setTaskDate(parseDateInputOrCurrent(td.taskDate.GetText()).AddDate(0, 0, -1).Unix(), true)
 }
