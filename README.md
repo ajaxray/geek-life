@@ -168,11 +168,16 @@ I will be glad to accept your PR. :)
 By default, it will try to create a db file in you home directory. 
 
 But as a geek, you may try to put it different location (e,g, in your dropbox for syncing).
-In that case, just mention `DB_FILE` as an environment variable.
- 
+In that case, just mention `DB_FILE` as an environment variable.  
 ```bash
 DB_FILE=~/dropbox/geek-life/default.db geek-life
 ```
+**UPDATE:** For Windows users, setting ENV variable is not so straight forward. 
+So, added a flag `--db-file` or `-d` to specify DB file path from command line easily. 
+ ```bash
+geek-life --db-file=D:\a-writable-dir\tasks.db
+```
+
 
 #### :question: How can I suggest a feature?
 

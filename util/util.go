@@ -15,10 +15,22 @@ import (
 )
 
 // ConnectStorm Create database connection
-func ConnectStorm() *storm.DB {
-	dbPath := GetEnvStr("DB_FILE", "")
-	var err error
+func ConnectStorm(dbFilePath string) *storm.DB {
+	var dbPath string
 
+	if dbFilePath != "" {
+		info, err := os.Stat(dbFilePath)
+		if err == nil && info.IsDir() {
+			fmt.Println("Mentioned DB path is a directory. Please specify a file or ignore to create automatically in home directory.")
+			os.Exit(1)
+		}
+
+		dbPath = dbFilePath
+	} else {
+		dbPath = GetEnvStr("DB_FILE", "")
+	}
+
+	var err error
 	if dbPath == "" {
 		// Try in home dir
 		dbPath, err = homedir.Expand("~/.geek-life/default.db")

@@ -7,6 +7,7 @@ import (
 	"github.com/asdine/storm/v3"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
+	flag "github.com/spf13/pflag"
 
 	"github.com/ajaxray/geek-life/model"
 	"github.com/ajaxray/geek-life/repository"
@@ -27,20 +28,29 @@ var (
 	db          *storm.DB
 	projectRepo repository.ProjectRepository
 	taskRepo    repository.TaskRepository
+
+	// Flag variables
+	dbFile string
 )
+
+func init() {
+	flag.StringVarP(&dbFile, "db-file", "d", "", "Specify DB file path manually.")
+}
 
 func main() {
 	app = tview.NewApplication()
+	flag.Parse()
 
-	db = util.ConnectStorm()
+	db = util.ConnectStorm(dbFile)
 	defer func() {
 		if err := db.Close(); err != nil {
 			util.LogIfError(err, "Error in closing storm Db")
 		}
 	}()
 
-	if len(os.Args) > 1 && os.Args[1] == "migrate" {
+	if flag.NArg() > 0 && flag.Arg(0) == "migrate" {
 		migrate(db)
+		fmt.Println("Database migrated successfully!")
 	} else {
 		projectRepo = repo.NewProjectRepository(db)
 		taskRepo = repo.NewTaskRepository(db)
