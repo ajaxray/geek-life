@@ -49,7 +49,7 @@ func parseDateInputOrCurrent(inputText string) time.Time {
 }
 
 func toDate(dateTime time.Time) time.Time {
-	return time.Date(dateTime.Year(), dateTime.Month(), dateTime.Day(), 0, 0, 0, 0, time.Local)
+	return time.Date(dateTime.Year(), dateTime.Month(), dateTime.Day(), 0, 0, 0, 0, dateTime.Location())
 }
 
 func makeButton(label string, handler func()) *tview.Button {
