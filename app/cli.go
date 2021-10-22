@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/ajaxray/geek-life/integration"
+	repo "github.com/ajaxray/geek-life/repository/storm"
 	"github.com/asdine/storm/v3"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
@@ -11,7 +13,6 @@ import (
 
 	"github.com/ajaxray/geek-life/model"
 	"github.com/ajaxray/geek-life/repository"
-	repo "github.com/ajaxray/geek-life/repository/storm"
 	"github.com/ajaxray/geek-life/util"
 )
 
@@ -30,11 +31,15 @@ var (
 	taskRepo    repository.TaskRepository
 
 	// Flag variables
-	dbFile string
+	dbFile           string
+	sync             bool
+	clearIntegration bool
 )
 
 func init() {
 	flag.StringVarP(&dbFile, "db-file", "d", "", "Specify DB file path manually.")
+	flag.BoolVar(&sync, "sync", false, "Sync with defined integration service then start")
+	flag.BoolVar(&clearIntegration, "clear", false, "Clear a defined integration")
 }
 
 func main() {
@@ -48,12 +53,19 @@ func main() {
 		}
 	}()
 
+	projectRepo = repo.NewProjectRepository(db)
+	taskRepo = repo.NewTaskRepository(db)
+
 	if flag.NArg() > 0 && flag.Arg(0) == "migrate" {
 		migrate(db)
 		fmt.Println("Database migrated successfully!")
+	} else if flag.NArg() == 2 && flag.Arg(0) == "integrate" {
+		integration.HandleIntegration(db, flag.Arg(1), clearIntegration)
 	} else {
-		projectRepo = repo.NewProjectRepository(db)
-		taskRepo = repo.NewTaskRepository(db)
+		if sync {
+			integration.HandleSync(projectRepo, taskRepo, db)
+			os.Exit(0)
+		}
 
 		layout = tview.NewFlex().SetDirection(tview.FlexRow).
 			AddItem(makeTitleBar(), 2, 1, false).

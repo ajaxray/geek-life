@@ -134,6 +134,7 @@ func (td *TaskDetailPane) toggleTaskStatus() {
 	status := !td.task.Completed
 	if taskRepo.UpdateField(td.task, "Completed", status) == nil {
 		td.task.Completed = status
+		_ = taskRepo.UpdateField(td.task, "ModifiedAt", time.Now().Unix())
 		taskPane.ReloadCurrentTask()
 	}
 }
@@ -146,6 +147,7 @@ func (td *TaskDetailPane) setTaskDate(unixDate int64, update bool) {
 			statusBar.showForSeconds("Could not update due date: "+err.Error(), 5)
 			return
 		}
+		_ = td.taskRepo.UpdateField(td.task, "ModifiedAt", time.Now().Unix())
 	}
 
 	if unixDate != 0 {
@@ -194,6 +196,7 @@ func (td *TaskDetailPane) prepareDetailsEditor() {
 
 func (td *TaskDetailPane) updateTaskNote(note string) {
 	td.task.Details = note
+	td.task.ModifiedAt = time.Now().Unix()
 	err := taskRepo.Update(td.task)
 	if err == nil {
 		statusBar.showForSeconds("[lime]Saved task detail", 5)

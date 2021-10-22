@@ -31,14 +31,14 @@ func (repo *projectRepository) GetByTitle(title string) (model.Project, error) {
 	return repo.getOneByField("Title", title)
 }
 
-func (repo *projectRepository) GetByUUID(UUID string) (model.Project, error) {
-	return repo.getOneByField("CloudId", UUID)
+func (repo *projectRepository) GetByIntegrationID(integrationID string) (model.Project, error) {
+	return repo.getOneByField("IntegrationID", integrationID)
 }
 
-func (repo *projectRepository) Create(title, UUID string) (model.Project, error) {
+func (repo *projectRepository) Create(title, integrationID string) (model.Project, error) {
 	project := model.Project{
-		Title: title,
-		UUID:  UUID,
+		Title:         title,
+		IntegrationID: integrationID,
 	}
 
 	err := repo.DB.Save(&project)

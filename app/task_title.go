@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
@@ -64,6 +65,7 @@ func (header *TaskDetailHeader) bindRenameEvent() *tview.InputField {
 				statusBar.showForSeconds("Could not update Task Title: "+err.Error(), 5)
 			} else {
 				header.task.Title = name
+				_ = header.taskRepo.UpdateField(header.task, "ModifiedAt", time.Now().Unix())
 				statusBar.showForSeconds("[yellow::]Task Title Updated.", 5)
 			}
 

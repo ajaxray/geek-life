@@ -4,5 +4,9 @@ package model
 type Project struct {
 	ID    int64  `storm:"id,increment",json:"id"`
 	Title string `storm:"index",json:"title"`
-	UUID  string `storm:"unique",json:"uuid,omitempty"`
+
+	// Related to integration
+	ModifiedAt    int64
+	Integration   string
+	IntegrationID string `storm:"unique",storm:"index"`
 }

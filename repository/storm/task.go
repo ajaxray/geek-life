@@ -56,21 +56,21 @@ func (t *taskRepository) GetAllByDateRange(from, to time.Time) ([]model.Task, er
 	return tasks, err
 }
 
-func (t *taskRepository) GetByID(ID string) (model.Task, error) {
-	panic("implement me")
+func (t *taskRepository) GetByID(ID int64) (model.Task, error) {
+	return t.getOneByField("ID", ID)
 }
 
-func (t *taskRepository) GetByUUID(UUID string) (model.Task, error) {
-	panic("implement me")
+func (t *taskRepository) GetByIntegrationID(integrationID string) (model.Task, error) {
+	return t.getOneByField("IntegrationID", integrationID)
 }
 
-func (t *taskRepository) Create(project model.Project, title, details, UUID string, dueDate int64) (model.Task, error) {
+func (t *taskRepository) Create(project model.Project, title, details, integrationID string, dueDate int64) (model.Task, error) {
 	task := model.Task{
-		ProjectID: project.ID,
-		Title:     title,
-		Details:   details,
-		UUID:      UUID,
-		DueDate:   dueDate,
+		ProjectID:     project.ID,
+		Title:         title,
+		Details:       details,
+		IntegrationID: integrationID,
+		DueDate:       dueDate,
 	}
 
 	err := t.DB.Save(&task)
@@ -95,4 +95,11 @@ func getRoundedDueDate(date time.Time) int64 {
 	}
 
 	return date.Unix()
+}
+
+func (repo *taskRepository) getOneByField(fieldName string, val interface{}) (model.Task, error) {
+	var task model.Task
+	err := repo.DB.One(fieldName, val, &task)
+
+	return task, err
 }
