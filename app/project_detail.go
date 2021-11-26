@@ -1,6 +1,8 @@
 package main
 
 import (
+	"unicode"
+
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 
@@ -44,7 +46,7 @@ func (pd *ProjectDetailPane) isShowing() bool {
 }
 
 func (pd *ProjectDetailPane) handleShortcuts(event *tcell.EventKey) *tcell.EventKey {
-	switch event.Rune() {
+	switch unicode.ToLower(event.Rune()) {
 	case 'd':
 		projectPane.RemoveActivateProject()
 		return nil

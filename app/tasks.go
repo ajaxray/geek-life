@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"sort"
 	"time"
+	"unicode"
 
 	"github.com/asdine/storm/v3"
 	"github.com/gdamore/tcell/v2"
@@ -102,7 +103,7 @@ func (pane *TaskPane) addTaskToList(i int) *tview.List {
 }
 
 func (pane *TaskPane) handleShortcuts(event *tcell.EventKey) *tcell.EventKey {
-	switch event.Rune() {
+	switch unicode.ToLower(event.Rune()) {
 	case 'j':
 		pane.list.SetCurrentItem(pane.list.GetCurrentItem() + 1)
 		return nil
