@@ -147,21 +147,21 @@ func (pane *TaskPane) LoadDynamicList(logic string) {
 	switch logic {
 	case "today":
 		tasks, err = pane.taskRepo.GetAllByDateRange(zeroTime, today)
-		rangeDesc = fmt.Sprintf("Today (and overdue)")
+		rangeDesc = "Today (and overdue)"
 
 	case "tomorrow":
 		tomorrow := today.AddDate(0, 0, 1)
 		tasks, err = pane.taskRepo.GetAllByDate(tomorrow)
-		rangeDesc = fmt.Sprintf("Tomorrow")
+		rangeDesc = "Tomorrow"
 
 	case "upcoming":
 		week := today.Add(7 * 24 * time.Hour)
 		tasks, err = pane.taskRepo.GetAllByDateRange(today, week)
-		rangeDesc = fmt.Sprintf("Upcoming (next 7 days)")
+		rangeDesc = "Upcoming (next 7 days)"
 
 	case "unscheduled":
 		tasks, err = pane.taskRepo.GetAllByDate(zeroTime)
-		rangeDesc = fmt.Sprintf("Unscheduled (task with no due date) ")
+		rangeDesc = "Unscheduled (task with no due date) "
 	}
 
 	projectPane.activeProject = nil

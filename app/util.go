@@ -67,10 +67,11 @@ func ignoreKeyEvt() bool {
 }
 
 // yetToImplement - to use as callback for unimplemented features
-func yetToImplement(feature string) func() {
-	message := fmt.Sprintf("[yellow]%s is yet to implement. Please Check in next version.", feature)
-	return func() { statusBar.showForSeconds(message, 5) }
-}
+// `yetToImplement` is unused (deadcode)
+// func yetToImplement(feature string) func() {
+// 	message := fmt.Sprintf("[yellow]%s is yet to implement. Please Check in next version.", feature)
+// 	return func() { statusBar.showForSeconds(message, 5) }
+// }
 
 func removeThirdCol() {
 	contents.RemoveItem(taskDetailPane)
@@ -83,8 +84,7 @@ func getTaskTitleColor(task model.Task) string {
 	if task.Completed {
 		colorName = "green"
 	} else if task.DueDate != 0 {
-		dayDiff := int(time.Unix(task.DueDate, 0).Sub(time.Now()).Hours() / 24)
-
+		dayDiff := int(time.Until(time.Unix(task.DueDate, 0)).Hours() / 24)
 		if dayDiff == 0 {
 			colorName = "orange"
 		} else if dayDiff < 0 {
@@ -111,12 +111,13 @@ func makeTaskListingTitle(task model.Task) string {
 	return fmt.Sprintf("[%s]%s %s%s", getTaskTitleColor(task), checkbox, prefix, task.Title)
 }
 
-func findProjectByID(id int64) *model.Project {
-	for i := range projectPane.projects {
-		if projectPane.projects[i].ID == id {
-			return &projectPane.projects[i]
-		}
-	}
+// `findProjectByID` is unused (deadcode)
+// func findProjectByID(id int64) *model.Project {
+// 	for i := range projectPane.projects {
+// 		if projectPane.projects[i].ID == id {
+// 			return &projectPane.projects[i]
+// 		}
+// 	}
 
-	return nil
-}
+// 	return nil
+// }
