@@ -87,9 +87,12 @@ func setKeyboardShortcuts() *tview.Application {
 		switch event.Rune() {
 		case 'p':
 			app.SetFocus(projectPane)
+			contents.RemoveItem(taskDetailPane)
 			return nil
+		case 'q':
 		case 't':
 			app.SetFocus(taskPane)
+			contents.RemoveItem(taskDetailPane)
 			return nil
 		}
 
@@ -131,4 +134,23 @@ func makeTitleBar() *tview.Flex {
 	return tview.NewFlex().
 		AddItem(titleText, 0, 2, false).
 		AddItem(versionInfo, 0, 1, false)
+}
+
+func AskYesNo(text string, f func()) {
+
+	modal := tview.NewModal().
+		SetText(text).
+		AddButtons([]string{"Yes", "No"}).
+		SetDoneFunc(func(buttonIndex int, buttonLabel string) {
+			if buttonLabel == "Yes" {
+				f()
+			}
+			pages := tview.NewPages().
+				AddPage("background", layout, true, true)
+			_ = app.SetRoot(pages, true).EnableMouse(true).Run()
+		})
+	pages := tview.NewPages().
+		AddPage("background", layout, true, true).
+		AddPage("modal", modal, true, true)
+	_ = app.SetRoot(pages, true).EnableMouse(true).Run()
 }

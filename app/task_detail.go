@@ -289,6 +289,7 @@ func (td *TaskDetailPane) handleShortcuts(event *tcell.EventKey) *tcell.EventKey
 	switch event.Key() {
 	case tcell.KeyEsc:
 		app.SetFocus(taskPane)
+		contents.RemoveItem(taskDetailPane)
 		return nil
 	case tcell.KeyDown:
 		td.taskDetailView.ScrollDown(1)
