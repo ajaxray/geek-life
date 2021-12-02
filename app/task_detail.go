@@ -90,7 +90,7 @@ func (td *TaskDetailPane) Export() {
 	}
 	content.WriteString("\n" + td.task.Details + " \n")
 
-	clipboard.WriteAll(content.String())
+	_ = clipboard.WriteAll(content.String())
 	app.SetFocus(td)
 	statusBar.showForSeconds("Task copyed. Try Pasting anywhere.", 5)
 }
