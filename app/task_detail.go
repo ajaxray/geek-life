@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"time"
+	"unicode"
 
 	"github.com/atotto/clipboard"
 	"github.com/gdamore/tcell/v2"
@@ -297,7 +298,7 @@ func (td *TaskDetailPane) handleShortcuts(event *tcell.EventKey) *tcell.EventKey
 		td.taskDetailView.ScrollUp(1)
 		return nil
 	case tcell.KeyRune:
-		switch event.Rune() {
+		switch unicode.ToLower(event.Rune()) {
 		case 'e':
 			td.activateEditor()
 			return nil

@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"unicode"
 
 	"github.com/asdine/storm/v3"
 	"github.com/gdamore/tcell/v2"
@@ -84,7 +85,7 @@ func setKeyboardShortcuts() *tview.Application {
 		}
 
 		// Global shortcuts
-		switch event.Rune() {
+		switch unicode.ToLower(event.Rune()) {
 		case 'p':
 			app.SetFocus(projectPane)
 			return nil
