@@ -108,7 +108,7 @@ func (pane *ProjectPane) addProjectToList(i int, selectItem bool) {
 
 func (pane *ProjectPane) addSection(name string) {
 	pane.list.AddItem("[::d]"+name, "", 0, nil)
-	pane.list.AddItem("[::d]"+strings.Repeat(string(tcell.RuneS3), 25), "", 0, nil)
+	pane.list.AddItem("[::d]"+strings.Repeat(string(tcell.RuneHLine), 25), "", 0, nil)
 }
 
 func (pane *ProjectPane) handleShortcuts(event *tcell.EventKey) *tcell.EventKey {

@@ -45,7 +45,7 @@ func NewTaskDetailHeader(taskRepo repository.TaskRepository) *TaskDetailHeader {
 		AddItem(header.pages, 1, 1, true).
 		AddItem(blankCell, 1, 0, true).
 		AddItem(buttons, 1, 1, false).
-		AddItem(makeHorizontalLine(tcell.RuneS3, tcell.ColorGray), 1, 1, false)
+		AddItem(makeHorizontalLine(tcell.RuneHLine, tcell.ColorGray), 1, 1, false)
 
 	return &header
 }
