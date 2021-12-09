@@ -177,6 +177,7 @@ func (pane *TaskPane) LoadDynamicList(logic string) {
 		sort.Slice(tasks, func(i, j int) bool { return tasks[i].ProjectID < tasks[j].ProjectID })
 		pane.SetList(tasks)
 		app.SetFocus(taskPane)
+		contents.RemoveItem(taskDetailPane)
 
 		statusBar.showForSeconds("[yellow] Displaying tasks of "+rangeDesc, 5)
 	}

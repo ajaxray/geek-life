@@ -135,6 +135,7 @@ func (pane *ProjectPane) activateProject(idx int) {
 	projectDetailPane.SetProject(pane.activeProject)
 	contents.AddItem(projectDetailPane, 25, 0, false)
 	app.SetFocus(taskPane)
+	contents.RemoveItem(taskDetailPane)
 }
 
 // RemoveActivateProject deletes the currently active project

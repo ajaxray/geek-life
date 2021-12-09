@@ -88,9 +88,11 @@ func setKeyboardShortcuts() *tview.Application {
 		switch unicode.ToLower(event.Rune()) {
 		case 'p':
 			app.SetFocus(projectPane)
+			contents.RemoveItem(taskDetailPane)
 			return nil
 		case 't':
 			app.SetFocus(taskPane)
+			contents.RemoveItem(taskDetailPane)
 			return nil
 		}
 
