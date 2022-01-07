@@ -20,8 +20,12 @@ func NewProjectDetailPane() *ProjectDetailPane {
 	pane := ProjectDetailPane{
 		Flex: tview.NewFlex().SetDirection(tview.FlexRow),
 	}
-	deleteBtn := makeButton("[::u]D[::-]elete Project", projectPane.RemoveActivateProject)
-	clearBtn := makeButton("[::u]C[::-]lear Completed Tasks", taskPane.ClearCompletedTasks)
+	deleteBtn := makeButton("[::u]D[::-]elete Project", func() {
+		AskYesNo("Do you want to delete Project?", func() { projectPane.RemoveActivateProject() })
+	})
+	clearBtn := makeButton("[::u]C[::-]lear Completed Tasks", func() {
+		AskYesNo("Do you want to clear completed tasks?", func() { taskPane.ClearCompletedTasks() })
+	})
 
 	deleteBtn.SetBackgroundColor(tcell.ColorRed)
 	pane.
@@ -48,10 +52,10 @@ func (pd *ProjectDetailPane) isShowing() bool {
 func (pd *ProjectDetailPane) handleShortcuts(event *tcell.EventKey) *tcell.EventKey {
 	switch unicode.ToLower(event.Rune()) {
 	case 'd':
-		projectPane.RemoveActivateProject()
+		AskYesNo("Do you want to delete Project?", func() { projectPane.RemoveActivateProject() })
 		return nil
 	case 'c':
-		taskPane.ClearCompletedTasks()
+		AskYesNo("Do you want to clear completed tasks?", func() { taskPane.ClearCompletedTasks() })
 		return nil
 	}
 
