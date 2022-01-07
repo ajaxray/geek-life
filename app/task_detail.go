@@ -289,8 +289,9 @@ func writeToTmpFile(content string) (string, error) {
 func (td *TaskDetailPane) handleShortcuts(event *tcell.EventKey) *tcell.EventKey {
 	switch event.Key() {
 	case tcell.KeyEsc:
+		removeThirdCol()
 		app.SetFocus(taskPane)
-		contents.RemoveItem(taskDetailPane)
+		contents.AddItem(projectDetailPane, 25, 0, false)
 		return nil
 	case tcell.KeyDown:
 		td.taskDetailView.ScrollDown(1)

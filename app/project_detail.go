@@ -15,17 +15,21 @@ type ProjectDetailPane struct {
 	project *model.Project
 }
 
+func removeProjectWithConfirmation() {
+	AskYesNo("Do you want to delete Project?", projectPane.RemoveActivateProject)
+}
+
+func clearCompletedWithConfirmation() {
+	AskYesNo("Do you want to clear completed tasks?", taskPane.ClearCompletedTasks)
+}
+
 // NewProjectDetailPane Initializes ProjectDetailPane
 func NewProjectDetailPane() *ProjectDetailPane {
 	pane := ProjectDetailPane{
 		Flex: tview.NewFlex().SetDirection(tview.FlexRow),
 	}
-	deleteBtn := makeButton("[::u]D[::-]elete Project", func() {
-		AskYesNo("Do you want to delete Project?", func() { projectPane.RemoveActivateProject() })
-	})
-	clearBtn := makeButton("[::u]C[::-]lear Completed Tasks", func() {
-		AskYesNo("Do you want to clear completed tasks?", func() { taskPane.ClearCompletedTasks() })
-	})
+	deleteBtn := makeButton("[::u]D[::-]elete Project", removeProjectWithConfirmation)
+	clearBtn := makeButton("[::u]C[::-]lear Completed Tasks", clearCompletedWithConfirmation)
 
 	deleteBtn.SetBackgroundColor(tcell.ColorRed)
 	pane.
@@ -52,10 +56,10 @@ func (pd *ProjectDetailPane) isShowing() bool {
 func (pd *ProjectDetailPane) handleShortcuts(event *tcell.EventKey) *tcell.EventKey {
 	switch unicode.ToLower(event.Rune()) {
 	case 'd':
-		AskYesNo("Do you want to delete Project?", func() { projectPane.RemoveActivateProject() })
+		removeProjectWithConfirmation()
 		return nil
 	case 'c':
-		AskYesNo("Do you want to clear completed tasks?", func() { taskPane.ClearCompletedTasks() })
+		clearCompletedWithConfirmation()
 		return nil
 	}
 

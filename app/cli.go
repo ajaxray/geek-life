@@ -139,6 +139,7 @@ func makeTitleBar() *tview.Flex {
 
 func AskYesNo(text string, f func()) {
 
+	activePane := app.GetFocus()
 	modal := tview.NewModal().
 		SetText(text).
 		AddButtons([]string{"Yes", "No"}).
@@ -146,12 +147,12 @@ func AskYesNo(text string, f func()) {
 			if buttonLabel == "Yes" {
 				f()
 			}
-			pages := tview.NewPages().
-				AddPage("background", layout, true, true)
-			_ = app.SetRoot(pages, true).EnableMouse(true).Run()
+			app.SetRoot(layout, true).EnableMouse(true)
+			app.SetFocus(activePane)
 		})
+
 	pages := tview.NewPages().
 		AddPage("background", layout, true, true).
 		AddPage("modal", modal, true, true)
-	_ = app.SetRoot(pages, true).EnableMouse(true).Run()
+	_ = app.SetRoot(pages, true).EnableMouse(true)
 }
