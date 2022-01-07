@@ -186,6 +186,11 @@ and select `feature` label.
 
 Also, incomplete features in the current roadmap will be found in issue list. 
 You may :thumbsup: issues if you want to increase priority of a feature.
+---
+[![JetBrains Logo](media/jetbrains.png)](https://www.jetbrains.com/)  
+Developed with [GoLand](https://www.jetbrains.com/go/).  
+Thanks to [JetBrains](https://www.jetbrains.com/) for sponsoring [Licenses for Open Source Development](https://www.jetbrains.com/community/opensource/#support). 
+
 
 ---
 ### Footnotes 
