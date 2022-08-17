@@ -153,6 +153,22 @@ func (pane *ProjectPane) RemoveActivateProject() {
 	}
 }
 
+func (pane *ProjectPane) RenameActivateProject(newName string) {
+	if pane.activeProject == nil {
+		return
+	}
+
+	pane.activeProject.Title = newName
+	err := pane.repo.Update(pane.activeProject)
+	if err != nil {
+		statusBar.showForSeconds("Could not update project: "+err.Error(), 5)
+	} else {
+		statusBar.showForSeconds("[lime]Renamed Project: "+pane.activeProject.Title, 5)
+	}
+
+	pane.loadListItems(true)
+}
+
 func (pane *ProjectPane) loadListItems(focus bool) {
 	pane.list.Clear()
 	pane.addDynamicLists()
