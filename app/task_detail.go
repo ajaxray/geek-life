@@ -92,7 +92,7 @@ func (td *TaskDetailPane) Export() {
 
 	_ = clipboard.WriteAll(content.String())
 	app.SetFocus(td)
-	statusBar.showForSeconds("Task copyed. Try Pasting anywhere.", 5)
+	statusBar.showForSeconds("Task copied. Try Pasting anywhere.", 5)
 }
 
 func (td *TaskDetailPane) makeDateRow() *tview.Flex {
