@@ -23,17 +23,24 @@ func clearCompletedWithConfirmation() {
 	AskYesNo("Do you want to clear completed tasks?", taskPane.ClearCompletedTasks)
 }
 
+func renameProject() {
+	InputPopup("Renaming", projectPane.RenameActivateProject)
+}
+
 // NewProjectDetailPane Initializes ProjectDetailPane
 func NewProjectDetailPane() *ProjectDetailPane {
 	pane := ProjectDetailPane{
 		Flex: tview.NewFlex().SetDirection(tview.FlexRow),
 	}
 	deleteBtn := makeButton("[::u]D[::-]elete Project", removeProjectWithConfirmation)
+	renameBtn := makeButton("[::u]R[::-]ename Project", renameProject)
 	clearBtn := makeButton("[::u]C[::-]lear Completed Tasks", clearCompletedWithConfirmation)
 
 	deleteBtn.SetBackgroundColor(tcell.ColorRed)
 	pane.
 		AddItem(deleteBtn, 3, 1, false).
+		AddItem(blankCell, 1, 1, false).
+		AddItem(renameBtn, 3, 1, false).
 		AddItem(blankCell, 1, 1, false).
 		AddItem(clearBtn, 3, 1, false).
 		AddItem(blankCell, 0, 1, false)
@@ -57,6 +64,9 @@ func (pd *ProjectDetailPane) handleShortcuts(event *tcell.EventKey) *tcell.Event
 	switch unicode.ToLower(event.Rune()) {
 	case 'd':
 		removeProjectWithConfirmation()
+		return nil
+	case 'r':
+		renameProject()
 		return nil
 	case 'c':
 		clearCompletedWithConfirmation()
