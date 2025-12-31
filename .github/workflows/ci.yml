@@ -1,0 +1,29 @@
+name: CI
+
+defaults:
+  run:
+    shell: bash
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        mpi-np: [2, 3]
+        platform:
+          - ubuntu-latest
+          - ubuntu-24.04-arm
+          - windows-latest
+          - macos-15-intel
+          - macos-15
+      fail-fast: false
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - uses: actions/checkout@v6.0.1
+      - uses: actions/setup-go@v6.1.0
+      - run: . build.sh
