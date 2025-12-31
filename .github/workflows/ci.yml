@@ -28,7 +28,7 @@ jobs:
         with:
           go-version: '1.25.x'
           check-latest: true
-      - if: !startsWith(matrix.platform, 'macos-')
+      - if: (!startsWith(matrix.platform, 'macos-'))
         uses: crazy-max/ghaction-upx@v3
         with:
           install-only: true
