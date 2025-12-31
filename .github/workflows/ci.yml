@@ -25,6 +25,9 @@ jobs:
     steps:
       - uses: actions/checkout@v6.0.1
       - uses: actions/setup-go@v6.1.0
+        with:
+          go-version: '1.25.x'
+          check-latest: true
       - uses: crazy-max/ghaction-upx@v3
         with:
           install-only: true

@@ -4,7 +4,7 @@ env GOOS=darwin GOARCH=amd64 go build -ldflags="-s -w" -o builds/geek-life_darwi
 env GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -o builds/geek-life_linux-amd64 ./app
 env GOOS=linux GOARCH=arm64 go build -ldflags="-s -w" -o builds/geek-life_linux-arm64 ./app
 env GOOS=windows GOARCH=386 go build -ldflags="-s -w" -o builds/geek-life_windows-386 ./app
-upx builds/geek-life_*
+upx --force-macos builds/geek-life_*
 
 echo "SHA256 sum of release binaries: \n"
 shasum -a 256 -b builds/geek-life_*
