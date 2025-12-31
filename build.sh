@@ -6,5 +6,9 @@ env GOOS=linux GOARCH=arm64 go build -ldflags="-s -w" -o builds/geek-life_linux-
 env GOOS=windows GOARCH=386 go build -ldflags="-s -w" -o builds/geek-life_windows-386 ./app
 upx --force-macos builds/geek-life_*
 
-echo "SHA256 sum of release binaries: \n"
-shasum -a 256 -b builds/geek-life_*
+echo "SHA256 sum of release binaries:"
+if command -v shasum >/dev/null 2>&1; then
+  shasum -a 256 -b builds/geek-life_*
+else
+  echo "shasum not found"
+fi

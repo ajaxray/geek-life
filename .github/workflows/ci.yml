@@ -31,4 +31,5 @@ jobs:
       - uses: crazy-max/ghaction-upx@v3
         with:
           install-only: true
+          version: 4.1.0
       - run: . build.sh
