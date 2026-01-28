@@ -75,7 +75,7 @@ geek-life
 
 Done! *Manage your tasks your way!* 
 
-For Apple Silicon Users:** [@mohammadazeemwani](https://github.com/mohammadazeemwani) is maintaining [this fork](https://github.com/mohammadazeemwani/geek-life/releases) for up-to-date Mac Silicon releases.
+**For Apple Silicon Users:** [@mohammadazeemwani](https://github.com/mohammadazeemwani) is maintaining [this fork](https://github.com/mohammadazeemwani/geek-life/releases) for up-to-date Mac Silicon releases.
 
 ## :keyboard: Keyboard shortcuts
 
