@@ -156,3 +156,39 @@ func AskYesNo(text string, f func()) {
 		AddPage("modal", modal, true, true)
 	_ = app.SetRoot(pages, true).EnableMouse(true)
 }
+
+func InputPopup(title string, f func(input string)) {
+	activePane := app.GetFocus()
+	var name string
+
+	form := tview.NewForm().
+		AddInputField("", "", 40, nil, func(text string) {
+			name = text
+		})
+	form.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+		switch event.Key() {
+		case tcell.KeyEnter:
+			f(name)
+		case tcell.KeyEsc:
+		default:
+			return event
+		}
+
+		app.SetRoot(layout, true).EnableMouse(true)
+		app.SetFocus(activePane)
+
+		return event
+	}).SetBorder(true).SetTitle(title)
+	modal := tview.NewFlex().
+		AddItem(nil, 0, 1, false).
+		AddItem(tview.NewFlex().SetDirection(tview.FlexRow).
+			AddItem(nil, 0, 1, false).
+			AddItem(form, 5, 1, true).
+			AddItem(nil, 0, 1, false), 40, 1, true).
+		AddItem(nil, 0, 1, false)
+
+	pages := tview.NewPages().
+		AddPage("background", layout, true, true).
+		AddPage("modal", modal, true, true)
+	_ = app.SetRoot(pages, true).EnableMouse(true)
+}
