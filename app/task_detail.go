@@ -104,8 +104,12 @@ func (td *TaskDetailPane) makeDateRow() *tview.Flex {
 		SetDoneFunc(func(key tcell.Key) {
 			switch key {
 			case tcell.KeyEnter:
-				date := parseDateInputOrCurrent(td.taskDate.GetText())
-				td.setTaskDate(date.Unix(), true)
+                if td.taskDate.GetText() != "" {
+                    date := parseDateInputOrCurrent(td.taskDate.GetText())
+                    td.setTaskDate(date.Unix(), true)
+                } else {
+                    td.setTaskDate(0, true)
+                }
 			case tcell.KeyEsc:
 				td.setTaskDate(td.task.DueDate, false)
 			}
