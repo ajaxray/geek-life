@@ -198,9 +198,10 @@ func (pane *TaskPane) ActivateTask(idx int) {
 // ClearCompletedTasks removes tasks from current list that are in completed state
 func (pane *TaskPane) ClearCompletedTasks() {
 	count := 0
-	for i, task := range pane.tasks {
-		if task.Completed && pane.taskRepo.Delete(&pane.tasks[i]) == nil {
+	for i := len(pane.tasks) - 1; i >= 0; i-- {
+		if pane.tasks[i].Completed && pane.taskRepo.Delete(&pane.tasks[i]) == nil {
 			pane.list.RemoveItem(i)
+			pane.tasks = append(pane.tasks[:i], pane.tasks[i+1:]...)
 			count++
 		}
 	}
